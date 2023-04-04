@@ -100,7 +100,7 @@ await fetch("https://api.openai.com/v1/chat/completions",
   }
 
   return (
-    <div className='w-full h-[90%] mt-2 '>
+    <div className='w-full h-[100%] mt-1 '>
       <div className='w-full h-full'>
         <MainContainer>
           <ChatContainer>
