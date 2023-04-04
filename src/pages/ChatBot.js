@@ -10,13 +10,13 @@ const systemMessage = { //  Explain things like you're talking to a software pro
 }
 
 function ChatBot() {
-  const [messages, setMessages] = useState([
+    const [messages, setMessages] = useState([
     {
       
       message: "안녕하세요 오늘의 토론주제는 ''입니다.\n\n찬성과 반대를 정하겠습니다. 저는 200글자 이내로 대답하겠습니다.", // ChatGPT가 인사하는 메시지
       
       sentTime: "just now", // 메시지가 보내진 시간
-      sender: "ChatGPT" // 메시지를 보낸 사용자
+      sender: "Randa" // 메시지를 보낸 사용자
     }
   ]);
 
@@ -53,7 +53,7 @@ function ChatBot() {
 
     let apiMessages = chatMessages.map((messageObject) => { // chatMessages 배열의 모든 요소에 대해 반복문 실행
       let role = ""; // role 변수 초기화
-      if (messageObject.sender === "ChatGPT") { // 만약 sender가 "ChatGPT"이면
+      if (messageObject.sender === "Randa") { // 만약 sender가 "ChatGPT"이면
         role = "assistant"; // role 변수에 "assistant" 할당
       } else { // 그렇지 않으면
         role = "user"; // role 변수에 "user" 할당
@@ -93,11 +93,12 @@ await fetch("https://api.openai.com/v1/chat/completions",
   //console.log(data); // 응답 데이터를 콘솔에 출력
   setMessages([...chatMessages, {
     message: data.choices[0].message.content, // 응답 데이터에서 메시지 내용을 추출하여 chatMessages 배열에 추가
-    sender: "ChatGPT"
+    sender: "Randa"
   }]);
   setIsTyping(false); // 타이핑 중인 상태를 false로 변경
 });
   }
+
 
   return (
     <div className='w-full h-[100%] mt-1 '>
