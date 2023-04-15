@@ -33,7 +33,7 @@ function LoginPage() {
     return (
 
     <div className='flex w-screen  items-center justify-center h-screen bg-orange-300 '>
-        <div className=' flex w-3/6 bg-white mx-auto h-5/6 items-center justify-center shadow-2xl rounded-2xl 
+        <div className=' flex w-5/6 lg:w-3/6 bg-white  h-5/6 items-center justify-center shadow-2xl rounded-2xl 
         gap-10 flex-col'>
             <div className='  justify-center items-center flex '>
                <img src={Logo}/>
@@ -53,13 +53,12 @@ function LoginPage() {
                 <button className='ml-2  hover:text-orange-300' onClick={()=> navigate('/register')}>가입</button>
                </div>
             </div> */}
-            <div className='border-2 w-5/6  -mt-5 border-black'></div>
 
-            <div className='-mt-7 text-2xl font-bold text-blue-500'>
-                환영합니다
+            <div className='text-center'>
+                <div className='text-lg md:text-2xl lg:text-2xl'>DebateMate에 오신걸 환영합니다!</div><br/>
+                <div className='text-sm md:text-sm lg:text-base text-gray-500'>진행을 위해 구글계정으로 로그인 해주세요</div>
             </div>
             <GoogleButton onClick={handleSignIn} className='p -mt-5'/>
-            
         </div>
         
 

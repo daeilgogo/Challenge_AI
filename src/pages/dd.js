@@ -68,8 +68,8 @@ function Home() {
                         movePage("left")
                      }} />
                   <Level complete={true} name="Kinder" title="튜토리얼" content="유치원생 쿠룽이" src={Kinder}></Level>
-                  <Level complete={true} name="Elementary" title="LEVEL1" content="초등학생 쿠룽이" src={Elementary}></Level>
-                  <Level complete={true} name="High" title="LEVEL2" content="고등학생 쿠룽이" src={High}></Level>
+                  <Level complete={false} name="Elementary" title="LEVEL1" content="초등학생 쿠룽이" src={Elementary}></Level>
+                  <Level complete={false} name="High" title="LEVEL2" content="고등학생 쿠룽이" src={High}></Level>
                   <Level complete={false} name="Univ" title="LEVEL3" content="대학생 쿠룽이" src={Univ}></Level>
                   {/*모바일 스크롤 버튼 > */}
                   <VscChevronRight className="absolute top-1/2 right-0 w-[40px] h-[40px] lg:hidden"

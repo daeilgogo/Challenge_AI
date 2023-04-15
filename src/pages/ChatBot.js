@@ -1,19 +1,25 @@
 import { useState } from 'react'
+import { useNavigate, useLocation } from 'react-router-dom'
 import '@chatscope/chat-ui-kit-styles/dist/default/styles.min.css';
 import { MainContainer, ChatContainer, MessageList, Message, MessageInput, TypingIndicator } from '@chatscope/chat-ui-kit-react';
 
-const API_KEY = "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";
+const API_KEY = "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";
 // "Explain things like you would to a 10 year old learning how to code."
 const systemMessage = { //  Explain things like you're talking to a software professional with 5 years of experience.
   "role": "system", "content": "assistant는 대학교 4학년 수준의 토론능력을 가진다.",
   "role": "system", "content": "assistant는 200글자이내로 답변한다."
 }
 
-function ChatBot() {
+function ChatBot(props) {
+
+  //파라미터 : 토론 카테고리 넘겨받기
+  const location = useLocation()
+  const Category = location.state.title
+
     const [messages, setMessages] = useState([
     {
       
-      message: "안녕하세요 오늘의 토론주제는 ''입니다.\n\n찬성과 반대를 정하겠습니다. 저는 200글자 이내로 대답하겠습니다.", // ChatGPT가 인사하는 메시지
+      message: "안녕하세요 오늘의 토론주제는 --입니다.\n\n찬성과 반대를 정하겠습니다. 저는 200글자 이내로 대답하겠습니다.", // ChatGPT가 인사하는 메시지
       
       sentTime: "just now", // 메시지가 보내진 시간
       sender: "Randa" // 메시지를 보낸 사용자
