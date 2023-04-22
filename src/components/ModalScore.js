@@ -8,7 +8,7 @@ function ModalScore({setModal,props,points,level,categorie}) {
 
   const navigate = useNavigate()
   return (
-    <div  className='flex h-screen w-screen fixed items-center justify-center opacity-80 bg-orange-100 '>
+    <div  className='flex h-full w-full fixed items-center justify-center opacity-80 bg-orange-100 top-0 left-0'>
       <motion.div className='flex fixed p-2 bg-white mx-auto w-5/6 h-3/6 rounded-3xl text-center
        shadow-2xl items-center justify-center'
        initial='hidden'

@@ -4,10 +4,11 @@ import { MainContainer, ChatContainer, MessageList, Message, MessageInput, Typin
 import Timer from '../components/Timer';
 import {firebase} from '../firebase'
 import ModalScore from '../components/ModalScore';
+import { useAsyncError } from 'react-router-dom';
 
 
 
-const API_KEY = "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";
+const API_KEY = "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";
 
 ///Choose side
 
@@ -60,7 +61,8 @@ function ChatBot(props) {
     // Initial system message to determine ChatGPT functionality
     // How it responds, how it talks, etc.
     setIsTyping(true);
-    setMinute(1)
+    setMinutes(minutes)
+    setSeconds(seconds)
     
    
     
@@ -121,84 +123,67 @@ await fetch("https://api.openai.com/v1/chat/completions",
     sender: "Randa"
   }]);
   setIsTyping(false); // 타이핑 중인 상태를 false로 변경
-  setMinute(1)
- 
+  if(isTyping===false){
+      setSeconds(sdc)
+        setMinutes(min)
+        setState(state+1)
+  }
 });
   }
 
 
     ///// Set Timer 
-
-
-
-    
-    const [minute,setMinute]=useState(1);
-    const [state,setState]=useState(1)
-    const [isPaused,setIsPaused]=useState(true)
-    const [secondsLeft, setSecondsLeft] = useState(0);
-    const [done,setDone]=useState(false)
   
-  const secondsLeftRef = useRef(secondsLeft);
-  const stateRef = useRef(state);
+   var min =0
+   var sdc=5
+  const [seconds, setSeconds] = useState(sdc);
+  const [minutes, setMinutes] = useState(min);
+  const [done,setDone]=useState(false)
+  const [state,setState]=useState(1)
+
+  ////done page open 
+
   
-  
-  function tick() {
-       secondsLeftRef.current--;
-      setSecondsLeft(secondsLeftRef.current);
-  }
-  function switchMode() {
-         
-    const nextSeconds =  minute  * 60
-    setSecondsLeft(nextSeconds);
-    secondsLeftRef.current = nextSeconds;
-    stateRef.current++;
-    setState(stateRef.current);
-    if(stateRef.current===4){
-       setDone(!done)
-    }
    
-  }
 
   
   useEffect(() => {
-  
-      
-    secondsLeftRef.current = minute* 60;
-    setSecondsLeft(secondsLeftRef.current);
-
-    const interval = setInterval(() => {
-      
-        if (secondsLeftRef.current === 0) {
-            return switchMode();
-          }
-        tick();
-      },1000);
-
-  
-        return () => clearInterval(interval);
-      
-    }, []);
-  
-  
+    const countdown = setInterval(() => {
+      if (seconds > 0) {
+        setSeconds(seconds - 1);
+      } else if (minutes > 0) {
+        setMinutes(minutes - 1);
+        setSeconds(59);
+      } else {
+        setSeconds(sdc)
+        setMinutes(min)
+        setState(state+1)
+          if(state===4){
+            setDone(!done);
+            clearInterval(countdown)
+        } 
+      }
+    
+    }, 1000);
    
-    const totalSeconds = minute*60
-    const percentage = Math.round(secondsLeft / totalSeconds * 100);
-  
-    var minutes = Math.floor(secondsLeft / 60);
-    let seconds = secondsLeft % 60;
-    if(minutes < 10){minutes='0'+minutes};
-    if(seconds < 10){seconds = '0'+seconds};
+    return () => clearInterval(countdown);
     
+  }, [seconds, minutes]);
+
+
+ const totalSeconds= (min*60)+sdc
+ const totalSecondLeft=(minutes*60)+seconds
+ const percentage=Math.round((totalSecondLeft/totalSeconds)*100)
   
-    var setcolor
+
+ var setcolor
     
-    if(minutes<=(minutes/2)){
-    setcolor='#CC2A0B'
-    }else{
-    setcolor='#4BCC0B'
-    }
-  
-  
+ if(minutes<=(minutes/2)){
+ setcolor='#CC2A0B'
+ }else{
+ setcolor='#4BCC0B'
+ }
+ 
   
   
 
