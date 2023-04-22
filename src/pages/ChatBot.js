@@ -8,7 +8,7 @@ import { useAsyncError } from 'react-router-dom';
 
 
 
-const API_KEY = "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";
+const API_KEY = "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";
 
 ///Choose side
 
@@ -134,8 +134,8 @@ await fetch("https://api.openai.com/v1/chat/completions",
 
     ///// Set Timer 
   
-   var min =0
-   var sdc=5
+   var min =2
+   var sdc=30
   const [seconds, setSeconds] = useState(sdc);
   const [minutes, setMinutes] = useState(min);
   const [done,setDone]=useState(false)
@@ -183,14 +183,25 @@ await fetch("https://api.openai.com/v1/chat/completions",
  }else{
  setcolor='#4BCC0B'
  }
- 
-  
+ let  second = ''
+ let  minute=''
+ if(minutes<10){
+   minute ='0'+minutes
+ }
+ else{
+  minute =minutes
+ }
+ if(seconds<10){
+   second ='0'+seconds
+ }else{
+  second =seconds
+ }
   
 
   return (
     <div className='w-[95%] h-4/6 fixed mt-1'>
             <div className='flex  items-center justify-center  w-full gap-4'>
-              <div className=''>{isTyping? (<><Timer minutes={0} seconds={0} percentage={0}/></>):(<Timer minutes={minutes} seconds={seconds} percentage={percentage}/>)}</div>
+              <div className=''>{isTyping? (<><Timer minutes={0} seconds={0} percentage={0}/></>):(<Timer minutes={minute} seconds={second} percentage={percentage} setcolor={setcolor}/>)}</div>
               <div className='bg-white w-5/6 h-full flex  flex-1 justify-center  mr-2 items-center'> 
                {state===1 && ( <div className='p-2 bg-orange-300 rounded-xl'>
                 {props.position}합니다
