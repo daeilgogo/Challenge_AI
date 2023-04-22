@@ -1,12 +1,13 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect,useRef} from 'react'
 import '@chatscope/chat-ui-kit-styles/dist/default/styles.min.css';
 import { MainContainer, ChatContainer, MessageList, Message, MessageInput, TypingIndicator } from '@chatscope/chat-ui-kit-react';
 import Timer from '../components/Timer';
 import {firebase} from '../firebase'
+import ModalScore from '../components/ModalScore';
 
 
 
-const API_KEY = "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";
+const API_KEY = "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";
 
 ///Choose side
 
@@ -15,6 +16,7 @@ const API_KEY = "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";
 
 
 function ChatBot(props) {
+  
   const [messages, setMessages] = useState([
     {
       message: "안녕하세요 오늘의 토론주제의 카테고리는  "+props.categorie+" 입니다.\n\n찬성과 반대를 정하겠습니다. 저는 200글자 이내로 대답하겠습니다.", // ChatGPT가 인사하는 메시지
@@ -57,7 +59,9 @@ function ChatBot(props) {
 
     // Initial system message to determine ChatGPT functionality
     // How it responds, how it talks, etc.
-    setIsTyping(true); 
+    setIsTyping(true);
+    setMinute(1)
+    
    
     
     await processMessageToChatGPT(newMessages);
@@ -117,26 +121,120 @@ await fetch("https://api.openai.com/v1/chat/completions",
     sender: "Randa"
   }]);
   setIsTyping(false); // 타이핑 중인 상태를 false로 변경
-
-
-
+  setMinute(1)
+ 
 });
   }
 
- 
+
+    ///// Set Timer 
 
 
 
+    
+    const [minute,setMinute]=useState(1);
+    const [state,setState]=useState(1)
+    const [isPaused,setIsPaused]=useState(true)
+    const [secondsLeft, setSecondsLeft] = useState(0);
+    const [done,setDone]=useState(false)
+  
+  const secondsLeftRef = useRef(secondsLeft);
+  const stateRef = useRef(state);
+  
+  
+  function tick() {
+       secondsLeftRef.current--;
+      setSecondsLeft(secondsLeftRef.current);
+  }
+  function switchMode() {
+         
+    const nextSeconds =  minute  * 60
+    setSecondsLeft(nextSeconds);
+    secondsLeftRef.current = nextSeconds;
+    stateRef.current++;
+    setState(stateRef.current);
+    if(stateRef.current===4){
+       setDone(!done)
+    }
+   
+  }
 
+  
+  useEffect(() => {
+  
+      
+    secondsLeftRef.current = minute* 60;
+    setSecondsLeft(secondsLeftRef.current);
+
+    const interval = setInterval(() => {
+      
+        if (secondsLeftRef.current === 0) {
+            return switchMode();
+          }
+        tick();
+      },1000);
+
+  
+        return () => clearInterval(interval);
+      
+    }, []);
+  
+  
+   
+    const totalSeconds = minute*60
+    const percentage = Math.round(secondsLeft / totalSeconds * 100);
+  
+    var minutes = Math.floor(secondsLeft / 60);
+    let seconds = secondsLeft % 60;
+    if(minutes < 10){minutes='0'+minutes};
+    if(seconds < 10){seconds = '0'+seconds};
+    
+  
+    var setcolor
+    
+    if(minutes<=(minutes/2)){
+    setcolor='#CC2A0B'
+    }else{
+    setcolor='#4BCC0B'
+    }
+  
+  
+  
+  
 
   return (
-    <div className='w-[95%] h-4/6 fixed'>
-        <div className='flex  w-full mx-auto items-center bg-white justify-center mb-3 -mt-10 border-b-2 border-t-2 border-b-black border-t-black '>
-           <Timer/>
-        </div>
-        
-           
-      <div className='w-full h-full'>
+    <div className='w-[95%] h-4/6 fixed mt-1'>
+            <div className='flex  items-center justify-center  w-full gap-4'>
+              <div className=''>{isTyping? (<><Timer minutes={0} seconds={0} percentage={0}/></>):(<Timer minutes={minutes} seconds={seconds} percentage={percentage}/>)}</div>
+              <div className='bg-white w-5/6 h-full flex  flex-1 justify-center  mr-2 items-center'> 
+               {state===1 && ( <div className='p-2 bg-orange-300 rounded-xl'>
+                {props.position}합니다
+               </div>)}
+               {state>1 && (<div className='p-1 bg-gray-200 rounded-xl'>
+               완료됨
+               </div>)}
+               <div className='border-4 w-6 border-black h-1/6 bg-black'></div>
+               {state===2 &&  (<div className='p-2 bg-orange-300 rounded-xl'>
+                답성하세요
+               </div>)}
+               {state>2 &&(<div className='p-1 bg-gray-200 rounded-xl'>
+               완료됨
+               </div>)}
+               <div className='border-4 w-6 border-black h-1/6 bg-black'></div>
+               {state===3 && (<div className='p-2 bg-orange-300 rounded-xl'>
+                잔송합니다
+               </div>)}
+               {state>3 &&(<div className='p-1 bg-gray-200 rounded-xl'>
+                완료됨
+               </div>)}
+               <div className='border-4 w-6 border-black h-1/6 bg-black'></div>
+               {state > 3 && (<div className='p-2 bg-orange-300 rounded-xl'>
+                끝났습니다
+               </div>)}
+             
+              </div>
+             </div>
+      <div className='w-[95%] h-4/6  fixed'>
         <MainContainer>
           <ChatContainer>
             <MessageList
@@ -154,6 +252,9 @@ await fetch("https://api.openai.com/v1/chat/completions",
           </ChatContainer>
         </MainContainer>
       </div>
+      {done &&
+            (<ModalScore props={props.src} points='80 점' level={props.Level} categorie={props.category} setModal={props.setScore}/>)
+            }
     </div>
   )
 }

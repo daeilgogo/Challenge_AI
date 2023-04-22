@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react'
+import React, {useEffect, useState,useRef} from 'react'
 import { UserAuth } from '../context/AuthContext'
 import { useNavigate } from 'react-router-dom'
 import Logo from '../assets/logo.png'
@@ -12,9 +12,7 @@ import ModalScore from '../components/ModalScore'
 import WarningModal from '../components/WarningModal'
 import {firebase} from '../firebase'
 import { useLocation } from 'react-router-dom'
-
-
-
+import Timer from '../components/Timer'
 
 
 
@@ -46,23 +44,23 @@ function ChatPage() {
           return  setScore(doc.data())
         })
        });
-    })
-    
-    
-     
-
-
+      
+    },)
     //// Send data to firebase:
 
     const [new_Score,setNew_Score]=useState(150)
+
     const Level_Done= async()=>{
-      const db = firebase.firestore();
+    try { const db = firebase.firestore();
       const userRef = db.collection('users').doc(user.uid).collection(Level).doc(category);
         await userRef.set({
         Score:new_Score,
         Title:category,
        }, { merge: true });
-
+      }
+       catch(error){
+        console.log(error)
+       }
     }
 
    
@@ -93,13 +91,13 @@ function ChatPage() {
           
             
           </div>
-          <div className='w-full mx-auto h-full bg-white justify-center items-center flex flex-col gap-5 rounded-xl text-sm'>
-           <ChatBot categorie={category} />
+          <div className='w-full mx-auto h-full bg-white mt-5 items-center flex flex-col gap-10 rounded-xl text-sm'>
+
+           <ChatBot categorie={category} src={src} Level={Level} category={category} setScore={setScore} position={position}/>
            {
             modal && (<WarningModal setModal={setModal}/>)
            }
-           {done &&
-            (<ModalScore props={src} points='80 점' level={Level} categorie={category} setModal={setScore}/>)}
+           
             
           </div> 
         </div>
