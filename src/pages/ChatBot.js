@@ -141,7 +141,7 @@ await fetch("https://api.openai.com/v1/chat/completions",
   const [done,setDone]=useState(false)
   const [state,setState]=useState(1)
 
-  ////done page open 
+
 
   
    
@@ -158,6 +158,9 @@ await fetch("https://api.openai.com/v1/chat/completions",
         setSeconds(sdc)
         setMinutes(min)
         setState(state+1)
+        
+          ////done page open 
+        
           if(state===4){
             setDone(!done);
             clearInterval(countdown)
