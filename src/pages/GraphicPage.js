@@ -5,6 +5,7 @@ import Logo from '../assets/logo.png'
 import Coins from '../assets/coins.png'
 import { FaBars, } from 'react-icons/fa'
 import MenuBar from '../components/MenuBar'
+import GraphExample from '../assets/graphExample.png'
 
 
 function GraphicPage() {
@@ -34,31 +35,7 @@ function GraphicPage() {
             
           </div>
           <div className='w-5/6 mx-auto h-5/6 bg-white justify-center items-center flex flex-col gap-7 rounded-xl font-bold'>
-              
-              <div className='w-2/6 bg-orange-200 mx-auto  text-center p-2 rounded-xl shadow-xl shadow-orange-500'>
-                사회
-              </div>
-
-              <div className='w-2/6 bg-orange-200 mx-auto  text-center p-2 rounded-xl shadow-xl shadow-orange-500'>
-                환경
-              </div>
-
-              <div className='w-2/6  bg-orange-200 mx-auto  text-center p-2 rounded-xl shadow-xl shadow-orange-500'>
-                 기술
-              </div>
-
-              <div className='w-2/6  bg-orange-200 mx-auto  text-center p-2 rounded-xl shadow-xl shadow-orange-500'>
-                 기술
-              </div>
-
-              <div className='w-2/6  bg-orange-200 mx-auto  text-center p-2 rounded-xl shadow-xl shadow-orange-500'>
-                 기술
-              </div>
-
-              <div className='w-2/6  bg-orange-200 mx-auto  text-center p-2 rounded-xl shadow-xl shadow-orange-500'>
-                 기술
-              </div>
-
+          <img className='w-auto h-auto' src={GraphExample}/>
           </div> 
         </div>
     </div>

@@ -1,13 +1,15 @@
 import { useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
+import { UserAuth } from '../context/AuthContext'
 import '@chatscope/chat-ui-kit-styles/dist/default/styles.min.css';
 import { MainContainer, ChatContainer, MessageList, Message, MessageInput, TypingIndicator } from '@chatscope/chat-ui-kit-react';
+const Topic = "스마트폰은 유아에게 부정적 영향을 미친다"
 
-const API_KEY = "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";
-// "Explain things like you would to a 10 year old learning how to code."
+
+const API_KEY = "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";
+
 const systemMessage = { //  Explain things like you're talking to a software professional with 5 years of experience.
-  "role": "system", "content": "assistant는 대학교 4학년 수준의 토론능력을 가진다.",
-  "role": "system", "content": "assistant는 200글자이내로 답변한다."
+  "role": "system", "content": `지금부터 토론을 시작하겠습니다. 주제는 ${Topic} 입니다. 당신은 반대 입장이고, 저는 찬성 입장입니다. 토론의 난이도 조절을 위해 당신은 항상 대학원 박사 수준으로 말해야 합니다. 당신은 항상 '이 주제에 대한 전문 분야를 전공하는 박사로써...'라고 말을 시작해야 합니다. 또한 난이도 조절을 위해 의견의 50%는 사자성어, 고사성어, 어려운 한자어 등을 사용해야 합니다.`,
 }
 
 function ChatBot(props) {
@@ -15,14 +17,14 @@ function ChatBot(props) {
   //파라미터 : 토론 카테고리 넘겨받기
   const location = useLocation()
   const Category = location.state.title
+  const { user } = UserAuth() //유저정보
+  const Now = new Date() //현재시간정보
 
     const [messages, setMessages] = useState([
     {
-      
-      message: "안녕하세요 오늘의 토론주제는 --입니다.\n\n찬성과 반대를 정하겠습니다. 저는 200글자 이내로 대답하겠습니다.", // ChatGPT가 인사하는 메시지
-      
-      sentTime: "just now", // 메시지가 보내진 시간
-      sender: "Randa" // 메시지를 보낸 사용자
+      message: "안녕하세요!", // ChatGPT가 인사하는 메시지
+      sentTime: Now, // 메시지가 보내진 시간
+      sender: "쿠룽이" // 메시지를 보낸 사용자
     }
   ]);
 
@@ -33,7 +35,7 @@ function ChatBot(props) {
     const newMessage = {
       message, // 보낼 메시지
       direction: 'outgoing', // 메시지의 방향 (outgoing: 보내는 메시지, incoming: 받는 메시지)
-      sender: "user" // 메시지를 보낸 사용자
+      sender: user.displayName // 메시지를 보낸 사용자
     };
     
     const newMessages = [...messages, newMessage];
@@ -59,7 +61,7 @@ function ChatBot(props) {
 
     let apiMessages = chatMessages.map((messageObject) => { // chatMessages 배열의 모든 요소에 대해 반복문 실행
       let role = ""; // role 변수 초기화
-      if (messageObject.sender === "Randa") { // 만약 sender가 "ChatGPT"이면
+      if (messageObject.sender === "쿠룽이") { // 만약 sender가 "ChatGPT"이면
         role = "assistant"; // role 변수에 "assistant" 할당
       } else { // 그렇지 않으면
         role = "user"; // role 변수에 "user" 할당
@@ -90,7 +92,7 @@ await fetch("https://api.openai.com/v1/chat/completions",
   headers: {
     "Authorization": "Bearer " + API_KEY, // API_KEY를 Authorization 헤더에 추가
     "Content-Type": "application/json", // JSON 형식으로 요청을 보냄
-    
+  stream: "True"
   },
   body: JSON.stringify(apiRequestBody) // 요청 바디에 apiRequestBody를 JSON 형식으로 추가
 }).then((data) => {
@@ -117,7 +119,7 @@ await fetch("https://api.openai.com/v1/chat/completions",
             >
               {messages.map((message, i) => {
                 //console.log(message) // 메시지 출력
-                return <Message key={i} model={message} /> // 메시지 출력
+                return <Message key={i} model={message} style={{backgroundColor:'blue'}}/> // 메시지 출력
               })}
             </MessageList>
             <MessageInput placeholder="입력해 주세요" onSend={handleSend} /> 

@@ -18,6 +18,15 @@ function ChatPage() {
   const location = useLocation()
   const Category = location.state.category
 
+  //객체 : 토론 주제
+  const debateList = [{
+      "과학과 기술" : '스마트폰은 유아에게 부정적 영향을 미친다',
+      "사회문제와 인권" : '코로나19로 인한 사회적 거리두기는 옳은 선택이다',
+      "자연과 환경" : '쓰레기를 분리수거하는 것은 불필요한 행동이다',
+      "경제와 비즈니스" : '코로나19로 인한 경제위기는 금융위기보다 심각하다',
+      "교육과 학습" : '온라인 수업은 오프라인 수업보다 효율적이다'
+    }]
+
 
   return (
     <div className='flex w-screen  items-center justify-center h-screen bg-orange-300'>
@@ -42,7 +51,7 @@ function ChatPage() {
         </div>
         <div className='w-full mx-auto h-full bg-white justify-center items-center flex flex-col gap-5 rounded-xl text-sm'>
           <div className='w-full h-[90%] mt-2 '>
-            <ChatBot dabatetitle={Category} />
+            <ChatBot dabatetitle={Category} debateSubject={debateList.Category}/>
           </div>
         </div>
       </div>
