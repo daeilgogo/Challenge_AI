@@ -45,7 +45,7 @@ function ChatPage() {
         })
        });
       
-    },)
+    },[])
     //// Send data to firebase:
 
     const [new_Score,setNew_Score]=useState(150)
