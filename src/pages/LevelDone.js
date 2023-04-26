@@ -27,8 +27,6 @@ function LevelDone() {
    const [points, setPoints]=useState('')
 
    useEffect(()=>{
-
-    
   const db = firebase.firestore();
 
   const getinfo = db.collection("users")

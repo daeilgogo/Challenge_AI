@@ -3,7 +3,7 @@ import { UserAuth } from '../context/AuthContext'
 import { useNavigate } from 'react-router-dom'
 import Logo from '../assets/logo.png'
 import Coins from '../assets/coins.png'
-import { FaBars,FaHome } from 'react-icons/fa'
+import { FaBars,FaHome, FaSleigh } from 'react-icons/fa'
 import MenuBar from '../components/MenuBar'
 import { IoSend } from "react-icons/io5";
 import { ImAttachment } from "react-icons/im";
@@ -85,7 +85,7 @@ function ChatPage() {
                 >
                    <FaHome className='w-8 h-7'/>
                 </button>
-                <button onClick={()=>{setDone(!done);Level_Done()}} >Modal</button>
+ 
                  {/* <button className='border-2 border-orange-300 rounded-xl p-1 hover:bg-orange-300 hover:text-white' onClick={handleLogout}>Log out</button> */}
             </div>
           
@@ -93,10 +93,9 @@ function ChatPage() {
           </div>
           <div className='w-full mx-auto h-full bg-white mt-5 items-center flex flex-col gap-10 rounded-xl text-sm'>
 
-           <ChatBot categorie={category} src={src} Level={Level} category={category} setScore={setScore} position={position}/>
-           {
-            modal && (<WarningModal setModal={setModal}/>)
-           }
+           <ChatBot categorie={category} src={src} Level={Level} category={category}
+            setScore={setScore} position={position}  Modal={setModal} isModal={modal}/>
+          
            
             
           </div> 
