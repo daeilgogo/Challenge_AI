@@ -2,8 +2,6 @@ import React,{useState,useEffect, useRef} from 'react'
 import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
 
-const red= '#f54e4e'
-const green='#4aec8c'
 
 function Timer(props) {
 
