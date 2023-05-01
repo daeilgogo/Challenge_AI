@@ -28,6 +28,7 @@ function ChatPage() {
     const position= location.state.position;
     const Level= location.state.Level;
     const src= location.state.img;
+    const Topic = location.state.Topic;
 
  
     
@@ -36,12 +37,12 @@ function ChatPage() {
     const [score, setScore]=useState('')
     useEffect(()=>{
       const db = firebase.firestore();
-      const getScore = db.collection("users")
-      getScore.orderBy('Score')
+      const getCoin = db.collection("users")
+      getCoin.orderBy('Coin')
       .get()
        .then((querySnapshot) => {
         querySnapshot.forEach((doc)=>{
-          return  setScore(doc.data())
+          return setScore(doc.data())    
         })
        });
       
@@ -73,8 +74,8 @@ function ChatPage() {
         gap-10 flex-col'>
           <div className=' bg-orange-300 w-full p-2 justify-center items-center flex fixed top-0'>
             <div className='w-[95%] mx-auto bg-white p-3 rounded-xl font-bold flex justify-between gap-5 items-center'>
-                <div className='flex-1'> 키테고리 : {category}</div>
-                <div className='flex-1'> 입장 : {position} {Level}</div>
+                <div className='flex-1'> 주제 : {Topic}</div>
+                <div className='flex-1'> {user.displayName}님의 입장 : {position}</div>
                 <div className='flex gap-2'>
                    <img alt='Coins' src={Coins}/>
                    <div>{score.Score}</div>
@@ -93,7 +94,7 @@ function ChatPage() {
           </div>
           <div className='w-full mx-auto h-full bg-white mt-5 items-center flex flex-col gap-10 rounded-xl text-sm'>
 
-           <ChatBot categorie={category} src={src} Level={Level} category={category}
+           <ChatBot categorie={category} src={src} Level={Level} Topic={Topic}
             setScore={setScore} position={position}  Modal={setModal} isModal={modal}/>
           
            
