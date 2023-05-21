@@ -167,11 +167,6 @@ useEffect(() => {
             </div>
            
           </div>
-          
-            
-         
-          
-          <GitHubContributionsGraph/>
 
           </div> 
         </div>
