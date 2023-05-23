@@ -8,10 +8,11 @@ import WarningModal from '../components/WarningModal';
 import { UserAuth } from '../context/AuthContext'
 import BuyTime from '../components/BuyTime';
 import Confirmation from '../components/Confirmation';
+import JustSend from '../components/JustSend';
 
 
 
-const API_KEY = "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";
+const API_KEY = "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";
 
 ///Choose side
 
@@ -59,6 +60,7 @@ function ChatBot(props) {
     setIsTyping(true);
     setIsActive(true)
     await processMessageToChatGPT(newMessages);
+    setPressButton(false)
   };
 
   async function processMessageToChatGPT(chatMessages) { // messages is an array of messages
@@ -159,12 +161,23 @@ function ChatBot(props) {
 const [confirm,setConfirm]=useState(false)
 const [openBuyTime,setOpenBuyTime]=useState(false)
 const [sendmessage,setSendmessage]=useState(false)
+const [value,setValue]=useState()
+const [pressButton,setPressButton]=useState(false)
 
-const HandleConfirmSubmit=(message)=>{
-  // handleSend(`${message}: 의견을 쓰지 못했습니다.`)
-  
+const [inputValue, setInputValue] = useState('');
+
+const handleTextChange = (message) => {
+  console.log('La valeur entre est : '+message);
+};
+
+const HandleConfirmSubmit=()=>{
   setConfirm(!confirm)
+  setPressButton(true)
 }
+const handleSendMessage = (message) => {
+  // Faites quelque chose avec la valeur de l'entrée (inputValue)
+  console.log('La valeur entre est : '+message);
+};
 const HandleConfirmBuyTime=()=>{
   setOpenBuyTime(!openBuyTime)
   setConfirm(!confirm)
@@ -179,7 +192,7 @@ const GobackTo=()=>{
     let countdown = null
 
     if (!isActive) {
-      countdown = setInterval((message) => {
+      countdown = setInterval(() => {
         if (seconds > 0) {
           setSeconds(seconds - 1);
 
@@ -354,6 +367,7 @@ const handleSelectChange = event => {
           <div className='p-1.5 bg-orange-300  rounded-full'></div>
           <div className='p-2 bg-gray-200 rounded-xl'>{DebateOrder[TimeState + 1]}</div>
         </div>
+       
       </div>
       <div className='w-[95%] h-4/6  fixed'>
         <MainContainer>
@@ -380,7 +394,7 @@ const handleSelectChange = event => {
               </div>
 
             </MessageList>
-            {isTyping===true? (<MessageInput placeholder="입력해 주세요"/>):(<MessageInput placeholder="입력해 주세요" onSend={handleSend} />)}
+            {isTyping===true? (<MessageInput  placeholder="입력해 주세요"/>):(<MessageInput    placeholder="입력해 주세요" onSend={handleSend} />)}
             
           </ChatContainer>
         </MainContainer>
@@ -389,6 +403,10 @@ const handleSelectChange = event => {
       {doneButton && <ModalScore src={props.src} points='80 점' level={props.Level} category={props.category} setModal={props.setScore} />}
       {openBuyTime && (<BuyTime value={selectedValue} onChange={handleSelectChange} setBuyTime={GobackTo} HandleBuyTime={HandleBuyTime} setOff={setOpenBuyTime}/>)}
       {confirm && (<Confirmation ConfirBuyTime={HandleConfirmBuyTime} ConfirmSubmit={HandleConfirmSubmit} />)}
+      {
+        pressButton && (<JustSend/>)
+      }
+    
     </div>
   )
 }

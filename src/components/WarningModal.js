@@ -23,10 +23,7 @@ function WarningModal({setModal}) {
           opacity:1, x:0
               
       }
-      
-
     }}>
-      
         <div className='flex flex-col w-5/6 gap-3  mx-auto  h-5/6 my-auto justify-center items-center '>
             <button className='-mt-20 ml-[95%] text-2xl font-bold mb-50' onClick={()=>setModal(false)}>x</button>
            <label className='text-3xl text-orange-300 font-bold'>! 주의 !</label>
@@ -35,7 +32,6 @@ function WarningModal({setModal}) {
         </div>
       </motion.div>
     </div>
-    
   )
 }
 

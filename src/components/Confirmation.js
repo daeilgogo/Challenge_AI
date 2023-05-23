@@ -37,7 +37,7 @@ export default function Confirmation({ConfirBuyTime, ConfirmSubmit}) {
            <label className='mt-5 text-center w-5/6'>시간이 끝났습니다, 계속 의견을 작성하시고 싶으면 시간을 구매할 수 있습니다 !!</label>
            <div className='flex w-full justify-center gap-10 mt-5'>
              <button className='p-2 bg-red-200  rounded-xl font-bold  hover:text-white  hover:bg-red-300 ' onClick={()=>{ConfirBuyTime()}}>시간을 구매하시겠습니까?</button>
-             <button className='p-2 bg-orange-200  rounded-xl font-bold  hover:text-white  hover:bg-orange-300 ' onClick={()=>{ConfirmSubmit()}}>그냥 제출하시겠습니까</button>
+             <button className='p-2 bg-orange-200  rounded-xl font-bold  hover:text-white  hover:bg-orange-300 ' onClick={()=>{ConfirmSubmit()}}>그냥 제출하시겠습니까?</button>
            </div>
            
         </div>

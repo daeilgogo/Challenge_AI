@@ -42,22 +42,6 @@ function ChatPage() {
               })
           
         },[user.uid])
-    //// Send data to firebase:
-
-    const [new_Score,setNew_Score]=useState(150)
-
-    // const Level_Done= async()=>{
-    // try { const db = firebase.firestore();
-    //   const userRef = db.collection('users').doc(user.uid).collection(Level).doc(category);
-    //     await userRef.set({
-    //     Score:new_Score,
-    //     Title:category,
-    //    }, { merge: true });
-    //   }
-    //    catch(error){
-    //     console.log(error)
-    //    }
-    // }
 
    
 
