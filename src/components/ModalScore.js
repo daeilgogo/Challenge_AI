@@ -27,8 +27,9 @@ function ModalScore(props) {
       >
         <div className='flex flex-col w-5/6 gap-3  mx-auto  h-5/6 my-auto justify-center items-center'>
           <img src={props.src} className='w-[115px] h-[100px]' />
-          <label className='text-xl font-bold mt-3'>총점 : {props.points} </label>
-          <label className='font-bold'><label className='text-yellow-500'>논리력</label>에서 가장 높은 평가를 받았습니다!</label>
+          <label className='text-xl font-bold mt-3'>총점 : {props.points} 점</label>
+           {props.count===0 && (<label className='font-bold'></label>)}
+           {props.count!=0 &&( <label className='font-bold'>시간초과 <label className='text-red-400'>{props.count}</label> 회로 <label className='text-red-400'>{props.minus}</label> 점 감점되었습니다.</label>)}
           <button className='p-1 bg-orange-200 w-4/6 mt-5 rounded-xl font-bold text-xl hover:text-white hover:bg-orange-300'
             onClick={() => navigate('/category', { state: { src: props.src, level: props.level, Category: props.category } })}>OK</button>
         </div>

@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import '@chatscope/chat-ui-kit-styles/dist/default/styles.css?ver=1.1.6';
+import '@chatscope/chat-ui-kit-styles/dist/default/styles.css?ver=1.1.9';
 import { MainContainer, ChatContainer, MessageList, Message, MessageInput, TypingIndicator, Avatar } from '@chatscope/chat-ui-kit-react';
 import Timer from '../components/Timer';
 import { firebase } from '../firebase'
@@ -12,14 +12,25 @@ import Confirmation from '../components/Confirmation';
 
 
 
-const API_KEY = "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";
+
+const API_KEY = "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";
 
 ///Choose side
 
 // "Explain things like you would to a 10 year old learning how to code."
 let DebateOrder_count = 1; //DebateOrder 인덱스에 활용됨.
 let replace_switch = false; //뒷부분 지워주는 조건문 사용시 홀수번일때 true값으로 변함.
+let match='0'
 
+var matchLogic=0;
+var matchPerPower=0;
+var matchExpress=0;
+var matchPositive=0;
+var matchListPost=0;
+                  
+var minus=0
+var finalScore=0
+var count =0 //// 메시지를 못보낸ㄴ 순간
 
 
 function ChatBot(props) {
@@ -150,6 +161,7 @@ function ChatBot(props) {
     // How it responds, how it talks, etc.
     setIsTyping(true);
     setIsActive(true)
+    setUserText('')
     await processMessageToChatGPT(newMessages);
   
   };
@@ -207,7 +219,6 @@ function ChatBot(props) {
         setIsTyping(false); // 타이핑 중인 상태를 false로 변경
       });
     setIsActive(false)
-    setState(TimeState + 1)
     setMinutes(min[TimeState])
     setSeconds(sdc[TimeState])
   }
@@ -216,8 +227,8 @@ function ChatBot(props) {
   ///// Set State 
   const [TimeState, setState] = useState(0)
   ////initialize timer
-  var min = [0, 0, 0, 0, 0, 0, 0, 0, 0]
-  var sdc = [30, 40, 20, 40, 30, 40, 40,40]
+  var min = [0, 0, 0, 0, 0, 0, 0, 0, 0,0,0]
+  var sdc = [30, 40, 20, 40, 30, 40, 40,40,0,0]
   const [seconds, setSeconds] = useState(sdc[0]);
   const [minutes, setMinutes] = useState(min[0]);
   const db = firebase.firestore()
@@ -240,13 +251,11 @@ const [userText,setUserText] = useState('')
 const HandleConfirmSubmit=()=>{
    setConfirm(!confirm)
    handleSend(userText)
-   setUserText('')
-  MessageInput.value=''
+   minus=minus-30 
+   count+=1
+ 
 }
-const handleSendMessage = (message) => {
-  // Faites quelque chose avec la valeur de l'entrée (inputValue)
-  console.log('La valeur entre est : '+message);
-};
+
 const HandleConfirmBuyTime=()=>{
   setOpenBuyTime(!openBuyTime)
   setConfirm(!confirm)
@@ -256,10 +265,6 @@ const GobackTo=()=>{
 }
 /////////////////////////////////// 
 
-const sendAutomatique=()=>{
-  
-}
-////////
 
 
   useEffect(() => {
@@ -275,11 +280,8 @@ const sendAutomatique=()=>{
           setSeconds(59);
 
         } else {
-          
 
-
-            
-            if(TimeState>=9){
+            if(TimeState>=10){
               setDone(true)
               clearInterval(countdown)
             }else if (TimeState<8){
@@ -297,15 +299,15 @@ const sendAutomatique=()=>{
     return () => clearInterval(countdown);
   }, [seconds, minutes, isActive, done, TimeState]);
 
-  // ///////////////////
-  // useEffect(() => {
-  //   if (!done) {
-  //     setState(TimeState + 1)
-  //     setMinutes(min[TimeState])
-  //     setSeconds(sdc[TimeState])
-  //     console.log("timestamp:" + TimeState + " debateState:" + DebateOrder[TimeState] + ' done:' + done)
-  //   }
-  // }, [isActive])
+  ///////////////////
+  useEffect(() => {
+    if (!done) {
+      setState(TimeState + 1)
+      setMinutes(min[TimeState])
+      setSeconds(sdc[TimeState])
+      console.log("timestamp:" + TimeState + " debateState:" + DebateOrder[TimeState] + ' done:' + done)
+    }
+  }, [isActive])
 
 
   const totalSeconds = (min[TimeState] * 60) + sdc[TimeState]
@@ -342,13 +344,17 @@ const sendAutomatique=()=>{
   const Level_Done= async()=>{
     try { const db = firebase.firestore();
       const userRef = db.collection('users').doc(user.uid).collection(props.Level).doc(props.categorie).collection(props.categorie).doc(props.Topic)
-        await userRef.set({
-        Score:newScore,
+      await userRef.set({
+        Score:finalScore,
         categorie:props.categorie,
         Debate_Subject:props.Topic,
         Message:messages,
        }, { merge: true });
        setDoneButton(true) 
+
+       if(match[1]>='500'){
+        const coins = db.collection('users').doc(user.uid)
+       }
       }
        catch(error){
         console.log(error)
@@ -434,6 +440,7 @@ const handleSelectChange = event => {
 }
 
 
+
   return (
     <div className='w-[95%] h-4/6 fixed mt-1'>
       <div className='flex items-center justify-center w-full gap-4'>
@@ -447,7 +454,9 @@ const handleSelectChange = event => {
           <div className='p-1.5 bg-orange-300  rounded-full'></div>
           <div className='p-2 bg-gray-200 rounded-xl'>{DebateOrder[TimeState + 1]}</div>
         </div>
-        <div className='mr-20'> Value: {getMessage} </div>
+      <div className='bg-red-300 mt[50%'>
+        value:  {matchListPost} ; {matchPerPower} {matchPositive}; {matchListPost}, {matchExpress}
+      </div>
       </div>
       <div className='w-[95%] h-4/6  fixed'>
         <MainContainer>
@@ -458,9 +467,32 @@ const handleSelectChange = event => {
             >
 
               {messages.map((message, i) => {
-                //사용자 채팅창이 홀수번이기때문에 홀수번일때 true값으로 바꿈.
+                //사용자 채팅창이 홀수번이기때문에 홀수번일때 true값으로 바꿈.'
+                console.log(message.message,"-------------")
                 if(i%2!==0){
                   replace_switch = true;
+                }
+                if(i == 10){
+                  const regex = /\s*(\d+)/
+                //   const regexLogic =  /놀리력\s*(\d+)/
+                //   const regexPerPower = /설득력:\s*(\d+)/
+                //   const regexExpress = /표현력:\s*(\d+)/
+                //   const regexPostive = /적극성:\s*(\d+)/
+                //   const regexLisPost = /경청자세:\s*(\d+)/
+                  
+
+                //   //////////matching------------
+                //   matchLogic=parseInt(message.message.match(regexLogic[1]));
+                //   matchPerPower=parseInt(message.message.match(regexLogic[1]),10);
+                //   matchExpress=parseInt(message.message.match(regexLogic[1]));
+                //   matchPositive=parseInt(message.message.match(regexLogic[1]));
+                //   matchListPost=parseInt(message.message.match(regexLogic[1]));
+                //  ///////////////////////
+
+                  match = message.message.match(regex);
+                  finalScore=parseInt(match[1],10)+minus
+                
+                  console.log(match[1])
                 }
                 
                 //채팅창 뒷부분 넣는거 지워주는 조건문. 
@@ -472,7 +504,7 @@ const handleSelectChange = event => {
                 //console.log(message) // 메시지 출력
                 return (
                   <div>
-                    <Message key={i} model={message} style={{ color: '' }}>
+                    <Message key={i} model={message} style={{ color: '#F9D8B5' }}>
                       {message.sender === "Randa" ? <Avatar className='' src={props.src} name="Randa" /> : <Avatar src={user.photoURL} name="user" />}
                     </Message>
                   </div>
@@ -491,7 +523,7 @@ const handleSelectChange = event => {
         </MainContainer>
       </div>
       {props.isModal && (<WarningModal setModal={props.Modal} />)}
-      {doneButton && <ModalScore src={props.src} points='80 점' level={props.Level} category={props.category} setModal={props.setScore} />}
+      {doneButton && <ModalScore src={props.src} points={finalScore} level={props.Level} category={props.category} setModal={props.setScore} count={count} minus={minus}/>}
       {openBuyTime && (<BuyTime value={selectedValue} onChange={handleSelectChange} setBuyTime={GobackTo} HandleBuyTime={HandleBuyTime} setOff={setOpenBuyTime}/>)}
       {confirm && (<Confirmation ConfirBuyTime={HandleConfirmBuyTime} ConfirmSubmit={HandleConfirmSubmit} />)}
 
