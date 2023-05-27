@@ -52,9 +52,9 @@ function ChatPage() {
         <div className=' flex w-[95%] bg-white mx-auto h-5/6 items-center justify-center rounded-2xl 
         gap-10 flex-col'>
           <div className=' bg-orange-300 w-full p-2 justify-center items-center flex fixed top-0'>
-            <div className='w-[95%] mx-auto bg-white p-3 rounded-xl font-bold flex justify-between gap-5 items-center'>
+            <div className='w-[95%] mx-auto bg-white p-3 rounded-xl font-bold flex gap-5 items-center'>
                 <div className='flex-1'> 주제 : {Topic}</div>
-                <div className='flex-1'> {user.displayName}님의 입장 : {position}</div>
+                <div className='flex-1 hidden lg:block'> {user.displayName}님의 입장 : {position}</div>
                 <button className='flex gap-2' onClick={()=>{setBuyTime(!buytTime)}}>
                    <img alt='Coins' src={Coins}/>
                    <div>{coins}</div>
@@ -68,8 +68,6 @@ function ChatPage() {
  
                  {/* <button className='border-2 border-orange-300 rounded-xl p-1 hover:bg-orange-300 hover:text-white' onClick={handleLogout}>Log out</button> */}
             </div>
-          
-            
           </div>
           <div className='w-full mx-auto h-full bg-white mt-5 items-center flex flex-col gap-10 rounded-xl text-sm'>
 

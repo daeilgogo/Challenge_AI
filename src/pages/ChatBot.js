@@ -9,10 +9,7 @@ import { UserAuth } from '../context/AuthContext'
 import BuyTime from '../components/BuyTime';
 import Confirmation from '../components/Confirmation';
 
-
-
-
-const API_KEY = "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";
+const API_KEY = "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";
 
 ///Choose side
 
@@ -32,9 +29,10 @@ function ChatBot(props) {
     5: `${props.position}측 질의입니다. ${chat_position}측 입장에서 답변해주세요. `,
     7: `${props.position}측 반론입니다. ${chat_position}측 입장에서 반론해주세요.`,
     9: `${props.position}측 최종 반론입니다. 
-    지금부터 당신은 세계 최고의 토론 전문가로써 토론에 대해 평가할 수 있습니다.
+    지금부터 당신은 세계 최고의 토론 전문가로써 토론에 대해 평가합니다.
     토론 ${props.position}측에 대해 다음 5가지 항목을 기준으로 각각 0~200점 (최대 200점) 사이 점수를 매겨주고,
-    점수를 매긴 이유를 설명해주세요. 그리고 5가지 점수를 총합해서 1000점 만점에 몇점인지 총점수를 환산해주세요. 마지막으로 가장 낮은 점수를 매긴 항목을 보완하기 위한 팁을 전달해주세요.
+    점수를 매긴 이유를 설명해주세요. 그리고 5가지 점수를 총합해서 1000점 만점에 몇점인지 총점수를 환산해주세요.
+    마지막으로 가장 낮은 점수를 매긴 항목을 보완하기 위한 팁을 전달해주세요.
     
     평가 기준으로 글은 명확하고 논리적인 구조를 갖추어야 하며, 문법적 오류나 맞춤법 실수가 없어야 합니다. 또한, 주어진 주제에 충실히 대답하고 주장은 근거와 함께 명확하게 전달되어야 합니다. 최대한 편견 없이 평가해주세요.
 
@@ -56,17 +54,17 @@ function ChatBot(props) {
     
     가장 약한 ...항목을 보완하려면 ...하는 것이 좋을 것입니다.`
   }
-
-  const DebateOrder = { //늘려야함.
+ 
+  const DebateOrder = { 
     0: '토론시작',
-    1: `${props.position}측 입론`,
-    2: `${chat_position}측 질의`,
+    1: `${props.position} 입론`,
+    2: `${chat_position} 질의`,
     3: `${props.position} 답변`,
-    4: `${chat_position}측 입론`,
-    5: `${props.position}측 질의`,
-    6: `${chat_position}측 답변`,
-    7: `${props.position}측 반론`,
-    8: `${chat_position}측 반론`,
+    4: `${chat_position} 입론`,
+    5: `${props.position} 질의`,
+    6: `${chat_position} 답변`,
+    7: `${props.position} 반론`,
+    8: `${chat_position} 반론`,
     9: '평가',
     10: '평가2'
   }
@@ -437,19 +435,18 @@ const handleSelectChange = event => {
   return (
     <div className='w-[95%] h-4/6 fixed mt-1'>
       <div className='flex items-center justify-center w-full gap-4'>
-        <div className=''><Timer minutes={minute} seconds={second} percentage={percentage} setcolor={setcolor} /></div>
+        <Timer minutes={minute} seconds={second} percentage={percentage} setcolor={setcolor}/>
         <div className='bg-white w-5/6 h-full flex  flex-1 justify-center  mr-2 items-center'>
-          <div className='p-2 bg-gray-200 rounded-xl'>{DebateOrder[TimeState - 1]}</div>
+          <div className='p-2 bg-gray-200 rounded-xl shrink-0'>{DebateOrder[TimeState - 1]}</div>
           <div className='p-0.5 w-6 bg-gray-200 h-1/6'></div>
           <div className='p-1.5 bg-gray-200 rounded-full'></div>
-          <div className='p-2 bg-orange-300 rounded-xl'>{DebateOrder[TimeState]}</div>
+          <div className='p-2 bg-orange-300 rounded-xl shrink-0'>{DebateOrder[TimeState]}</div>
           <div className='p-0.5 w-6  h-1/6 bg-orange-300'></div>
           <div className='p-1.5 bg-orange-300  rounded-full'></div>
-          <div className='p-2 bg-gray-200 rounded-xl'>{DebateOrder[TimeState + 1]}</div>
+          <div className='p-2 bg-gray-200 rounded-xl shrink-0'>{DebateOrder[TimeState + 1]}</div>
         </div>
-        <div className='mr-20'> Value: {getMessage} </div>
       </div>
-      <div className='w-[95%] h-4/6  fixed'>
+      <div className='w-[95%] h-4/6 fixed'>
         <MainContainer>
           <ChatContainer>
             <MessageList
@@ -465,7 +462,7 @@ const handleSelectChange = event => {
                 
                 //채팅창 뒷부분 넣는거 지워주는 조건문. 
                 if(replace_switch == true){
-                  console.log(message.message,i)
+                  console.log(message.message.i)
                   message.message = message.message.replace(Debate_command[i],"");
                   replace_switch = false;
                 }

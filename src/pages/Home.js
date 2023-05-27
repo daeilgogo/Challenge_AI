@@ -116,7 +116,7 @@ function Home() {
                      onClick={() => {
                         movePage("left")
                      }} />
-                  <Level complete={true} name="Kinder" title="튜토리얼" content="유치원생 쿠룽이" src={Kinder}></Level>
+                  <Level complete={false} name="Kinder" title="튜토리얼" content="유치원생 쿠룽이" src={Kinder}></Level>
                   <Level complete={true} name="Elementary" title={level.Level1} content="초등학생 쿠룽이" src={Elementary}></Level>
                   <Level complete={true} name="High" title={level.Level2} content="고등학생 쿠룽이" src={High}></Level>
                   <Level complete={false} name="Univ" title={level.Level3} content="대학생 쿠룽이" src={Univ}></Level>
