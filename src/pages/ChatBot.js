@@ -13,7 +13,7 @@ import Confirmation from '../components/Confirmation';
 
 
 
-const API_KEY = "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";
+const API_KEY = "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";
 
 ///Choose side
 
@@ -357,8 +357,34 @@ const GobackTo=()=>{
        }, { merge: true });
        setDoneButton(true) 
 
-       if(match[1]>='500'){
-        const coins = db.collection('users').doc(user.uid)
+       if(match[1]<='500'){
+        const SetCoins = db.collection('users').doc(user.uid)
+        await SetCoins.update({
+          Coins:firebase.firestore.FieldValue.increment(50)
+        })
+       }else if(match[1]>'500' && match[1]<='600'){
+        const SetCoins = db.collection('users').doc(user.uid)
+        await SetCoins.update({
+          Coins:firebase.firestore.FieldValue.increment(100)
+        })
+
+       }else if(match[1]>'600' && match[1]<='700'){
+        const SetCoins = db.collection('users').doc(user.uid)
+        await SetCoins.update({
+          Coins:firebase.firestore.FieldValue.increment(150)
+        })
+       }
+       else if(match[1]>'700' && match[1]<='850'){
+        const SetCoins = db.collection('users').doc(user.uid)
+        await SetCoins.update({
+          Coins:firebase.firestore.FieldValue.increment(200)
+        })
+       }
+       else if(match[1]>'850'){
+        const SetCoins = db.collection('users').doc(user.uid)
+        await SetCoins.update({
+          Coins:firebase.firestore.FieldValue.increment(250)
+        })
        }
       }
        catch(error){
