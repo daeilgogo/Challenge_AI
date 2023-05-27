@@ -13,7 +13,7 @@ import Confirmation from '../components/Confirmation';
 
 
 
-const API_KEY = "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";
+const API_KEY = "@@@@@@@@@";
 
 ///Choose side
 
