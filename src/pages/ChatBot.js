@@ -13,7 +13,7 @@ import Confirmation from '../components/Confirmation';
 
 
 
-const API_KEY = "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";
+const API_KEY = "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";
 
 ///Choose side
 
@@ -22,11 +22,11 @@ let DebateOrder_count = 1; //DebateOrder 인덱스에 활용됨.
 let replace_switch = false; //뒷부분 지워주는 조건문 사용시 홀수번일때 true값으로 변함.
 let match='0'
 
-var matchLogic=0;
-var matchPerPower=0;
-var matchExpress=0;
-var matchPositive=0;
-var matchListPost=0;
+let matchLogic = 0;
+let matchPerPower = 0;
+let matchExpress = 0;
+let matchPositive = 0;
+let matchListPost = 0;
                   
 var minus=0
 var finalScore=0
@@ -252,7 +252,6 @@ const HandleConfirmSubmit=()=>{
    setConfirm(!confirm)
    handleSend(userText)
    minus=minus-30 
-   count+=1
  
 }
 
@@ -284,9 +283,10 @@ const GobackTo=()=>{
             if(TimeState>=10){
               setDone(true)
               clearInterval(countdown)
-            }else if (TimeState<8){
+            }else if (TimeState<9){
               clearInterval(countdown)
               setConfirm(!confirm)
+              count+=1
               setSendmessage(!sendmessage)
             }
         }
@@ -349,6 +349,11 @@ const GobackTo=()=>{
         categorie:props.categorie,
         Debate_Subject:props.Topic,
         Message:messages,
+        Score_Logic:parseInt(matchLogic[1],10),
+        Score_PerPower:parseInt(matchPerPower[1],10),
+        Score_Express:parseInt(matchExpress[1],10),
+        Score_Positive:parseInt(matchPositive[1],10),
+        Score_ListPost:parseInt(matchListPost[1],10),
        }, { merge: true });
        setDoneButton(true) 
 
@@ -398,6 +403,7 @@ const handleSelectChange = event => {
              setMinutes(0)
              setSeconds(30)
              alert('시간을 추가된 것 성공되었습니다 !')
+             minus=minus-20 
              setOpenBuyTime(false)
              setSelectedValue('')
           }
@@ -416,6 +422,7 @@ const handleSelectChange = event => {
               setSeconds(40)
               alert('시간을 추가된 것 성공되었습니다 !')
               setOpenBuyTime(false)
+              minus=minus-20 
               setSelectedValue('')
           }
             break;
@@ -431,6 +438,7 @@ const handleSelectChange = event => {
               setSeconds(50)
               alert('시간을 추가된 것 성공되었습니다 !')
               setOpenBuyTime(false)
+              minus=minus-20 
               setSelectedValue('')
           }
             break;
@@ -454,8 +462,8 @@ const handleSelectChange = event => {
           <div className='p-1.5 bg-orange-300  rounded-full'></div>
           <div className='p-2 bg-gray-200 rounded-xl'>{DebateOrder[TimeState + 1]}</div>
         </div>
-      <div className='bg-red-300 mt[50%'>
-        value:  {matchListPost} ; {matchPerPower} {matchPositive}; {matchListPost}, {matchExpress}
+      <div className='bg-red-300 mt[50%]'>
+        총점수: {finalScore} ; {matchLogic[1]} ,{matchPerPower[1]} ,{matchExpress[1]},,{matchPositive[1]} ,{matchListPost[1]}
       </div>
       </div>
       <div className='w-[95%] h-4/6  fixed'>
@@ -473,26 +481,26 @@ const handleSelectChange = event => {
                   replace_switch = true;
                 }
                 if(i == 10){
-                  const regex = /\s*(\d+)/
-                //   const regexLogic =  /놀리력\s*(\d+)/
-                //   const regexPerPower = /설득력:\s*(\d+)/
-                //   const regexExpress = /표현력:\s*(\d+)/
-                //   const regexPostive = /적극성:\s*(\d+)/
-                //   const regexLisPost = /경청자세:\s*(\d+)/
+                  const regex = /총점수는\s*(\d+)/;
+                  const regexLogic = /논리력:\s*(\d+)/;
+                  const regexPerPower = /설득력:\s*(\d+)/;
+                  const regexExpress = /표현력:\s*(\d+)/;
+                  const regexPostive = /적극성:\s*(\d+)/;
+                  const regexLisPost = /경청자세:\s*(\d+)/;
                   
 
-                //   //////////matching------------
-                //   matchLogic=parseInt(message.message.match(regexLogic[1]));
-                //   matchPerPower=parseInt(message.message.match(regexLogic[1]),10);
-                //   matchExpress=parseInt(message.message.match(regexLogic[1]));
-                //   matchPositive=parseInt(message.message.match(regexLogic[1]));
-                //   matchListPost=parseInt(message.message.match(regexLogic[1]));
-                //  ///////////////////////
+                  //////////matching------------
+                  matchLogic=regexLogic.exec(message.message);
+                  matchPerPower=regexPerPower.exec(message.message)
+                  matchExpress=regexExpress.exec(message.message)
+                  matchPositive=regexPostive.exec(message.message)
+                  matchListPost=regexLisPost.exec(message.message)
+                 ///////////////////////
 
-                  match = message.message.match(regex);
+                  match = regex.exec(message.message)
                   finalScore=parseInt(match[1],10)+minus
                 
-                  console.log(match[1])
+                  console.log(matchLogic[1])
                 }
                 
                 //채팅창 뒷부분 넣는거 지워주는 조건문. 
