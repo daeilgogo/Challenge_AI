@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import '@chatscope/chat-ui-kit-styles/dist/default/styles.css?ver=1.1.9';
 import { MainContainer, ChatContainer, MessageList, Message, MessageInput, TypingIndicator, Avatar } from '@chatscope/chat-ui-kit-react';
 import Timer from '../components/Timer';
@@ -13,7 +13,7 @@ import Confirmation from '../components/Confirmation';
 
 
 
-const API_KEY = "@@@@@@@@@";
+const API_KEY = "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";
 
 ///Choose side
 
@@ -248,10 +248,17 @@ const [userText,setUserText] = useState('')
 
 
 
+
 const HandleConfirmSubmit=()=>{
-   setConfirm(!confirm)
-   handleSend(userText)
-   minus=minus-30 
+
+  if(userText===''){
+    alert('꼭 의견을 작성하셔야 제출 가능합니다. 그래서 시간을 구매하세요')
+  }else{
+    setConfirm(!confirm)
+    handleSend(userText)
+    minus=minus-30 
+  }
+
  
 }
 
@@ -281,6 +288,8 @@ const GobackTo=()=>{
         } else {
 
             if(TimeState>=10){
+              setMinutes(0)
+              setSeconds(0)
               setDone(true)
               clearInterval(countdown)
             }else if (TimeState<9){
@@ -356,7 +365,7 @@ const GobackTo=()=>{
         Score_ListPost:parseInt(matchListPost[1],10),
        }, { merge: true });
        setDoneButton(true) 
-
+//////////////////When the level is done increase value of Coins in the DB
        if(match[1]<='500'){
         const SetCoins = db.collection('users').doc(user.uid)
         await SetCoins.update({
@@ -381,7 +390,7 @@ const GobackTo=()=>{
         })
        }
        else if(match[1]>'850'){
-        const SetCoins = db.collection('users').doc(user.uid)
+        const SetCoins = db.collection('users').doc(user.uid)``
         await SetCoins.update({
           Coins:firebase.firestore.FieldValue.increment(250)
         })
@@ -424,7 +433,7 @@ const handleSelectChange = event => {
               
           }else if(coins>=3){
              await send.update({
-                  Coins: coins-3,
+                  Coins: coins-15,
               })
              setMinutes(0)
              setSeconds(30)
@@ -442,7 +451,7 @@ const handleSelectChange = event => {
               return   alert('Coins 부족합니다')
           }else if(coins>=5){
             await send.update({
-                  Coins: coins-5,
+                  Coins: coins-30,
               })
               setMinutes(0)
               setSeconds(40)
@@ -458,7 +467,7 @@ const handleSelectChange = event => {
               return   alert('Coins 부족합니다')
           }else if(coins>6){
             await send.update({
-                  Coins: coins-6,
+                  Coins: coins-35,
               })
               setMinutes(0)
               setSeconds(50)
@@ -488,9 +497,9 @@ const handleSelectChange = event => {
           <div className='p-1.5 bg-orange-300  rounded-full'></div>
           <div className='p-2 bg-gray-200 rounded-xl'>{DebateOrder[TimeState + 1]}</div>
         </div>
-      <div className='bg-red-300 mt[50%]'>
+      {/* <div className='bg-red-300 mt[50%]'>
         총점수: {finalScore} ; {matchLogic[1]} ,{matchPerPower[1]} ,{matchExpress[1]},,{matchPositive[1]} ,{matchListPost[1]}
-      </div>
+      </div> */}
       </div>
       <div className='w-[95%] h-4/6  fixed'>
         <MainContainer>
@@ -551,14 +560,14 @@ const handleSelectChange = event => {
               </div>
 
             </MessageList>
-            {isTyping===true? (<MessageInput placeholder="입력해 주세요"/>):(<MessageInput onChange={(value) => setUserText(value)}   placeholder="입력해 주세요" onSend={handleSend} />)}   
+            {isTyping===true? (<MessageInput placeholder="입력해 주세요"/>):(<MessageInput onChange={(value) => setUserText(value)}   placeholder="입력해 주세요" onSend={handleSend}  />)}   
            
           </ChatContainer>
         </MainContainer>
       </div>
       {props.isModal && (<WarningModal setModal={props.Modal} />)}
       {doneButton && <ModalScore src={props.src} points={finalScore} level={props.Level} category={props.category} setModal={props.setScore} count={count} minus={minus}/>}
-      {openBuyTime && (<BuyTime value={selectedValue} onChange={handleSelectChange} setBuyTime={GobackTo} HandleBuyTime={HandleBuyTime} setOff={setOpenBuyTime}/>)}
+      {openBuyTime && (<BuyTime value={selectedValue} onChange={handleSelectChange} setBuyTime={GobackTo} HandleBuyTime={HandleBuyTime} setOff={setOpenBuyTime}/>)&&<MessageInput/>}
       {confirm && (<Confirmation ConfirBuyTime={HandleConfirmBuyTime} ConfirmSubmit={HandleConfirmSubmit} />)}
 
     </div>

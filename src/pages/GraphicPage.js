@@ -1,6 +1,5 @@
 import React, {useEffect, useState,useRef} from 'react'
 import { UserAuth } from '../context/AuthContext'
-import { useNavigate } from 'react-router-dom'
 import Logo from '../assets/logo.png'
 import Coins from '../assets/coins.png'
 import { FaBars, } from 'react-icons/fa'

@@ -40,7 +40,7 @@ export const AuthContextProvider=({children})=>{
                 Name: user.displayName,
                 Email: user.email,
                 Photo: user.photoURL,
-                Coins: 0,
+                Coins: 500,
             },{ merge: true })
             .then(() => {
               console.log("Score initialized!");
