@@ -53,7 +53,7 @@ function ChatPage() {
         gap-10 flex-col'>
           <div className=' bg-orange-300 w-full p-2 justify-center items-center flex fixed top-0'>
             <div className='w-[95%] mx-auto bg-white p-3 rounded-xl font-bold flex gap-5 items-center'>
-                <div className='flex-1'> 주제 : {Topic}</div>
+                <div className='flex-1 text-sm'> 주제 : {Topic}</div>
                 <div className='flex-1 hidden lg:block'> {user.displayName}님의 입장 : {position}</div>
                 <button className='flex gap-2' onClick={()=>{setBuyTime(!buytTime)}}>
                    <img alt='Coins' src={Coins}/>

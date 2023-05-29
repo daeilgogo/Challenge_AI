@@ -5,7 +5,6 @@ import Logo from '../assets/logo.png'
 import Coins from '../assets/coins.png'
 import { FaBars,FaHome } from 'react-icons/fa'
 import { motion } from 'framer-motion'
-import B from '../assets/score/B.png'
 import {firebase} from '../firebase'
 import { useLocation } from 'react-router-dom'
 
@@ -123,7 +122,7 @@ function LevelDone() {
                 <div key={idx} className='flex mx-auto items-center gap-5  bg-orange-200 rounded-full w-5/6 justify-between font-bold text-xl shadow-xl'>
                    <div className=' w-4/6 mx-auto justify-center flex'>{items.Title}</div>
                       <div className='2/6 mx-auto flex'> 
-                      <img className='w-10 h-10' src={B}/>
+                      
                    </div> 
                 </div>
 
