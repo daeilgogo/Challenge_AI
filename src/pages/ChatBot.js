@@ -31,7 +31,7 @@ let matchListPost = 0;
 var minus = 0
 var finalScore = 0
 var count = 0 // 메시지를 못보낸 순간
-  
+
 let COMMON_PROMPT = '';
 let LEVEL_PROMPT_EDUCATION = '';
 let LEVEL_PROMPT_EXAMPLE = '';
@@ -101,10 +101,10 @@ function ChatBot(props) {
   //////////////////////
   ///CHATGPT HANDLING///
   //////////////////////
-  
+
   //[Object] system message for ChatGPT
   const systemMessage = {
-    "role": "system", 
+    "role": "system",
     "content":
       `지금부터 토론을 시작합니다. 당신은 ${LEVEL_PROMPT_EDUCATION} 토론자입니다. 따라서 다음과 같이 발언합니다.
      \n\n--------------------------------------------
@@ -124,23 +124,24 @@ function ChatBot(props) {
       message: `안녕하세요! 저는 ${LEVEL_PROMPT_EDUCATION} 쿠룽이입니다. 🦊\n
 오늘의 토론주제는 <b>"${DEBATE_TOPIC}"</b> 입니다. 
 저는 ${CHAT_POSITION}측이고, <b>${user.displayName}님은 ${USER_POSITION}측</b>입니다.\n
-토론은 정해진 순서대로 진행되고, 각 순서마다 시간제한이 있어 시간 초과시 감점됩니다.
-토론 순서를 확인하시려면 '토론 순서' 버튼을, 토론을 시작하시려면 '토론 시작' 버튼을 눌러주세요.`,  // ChatGPT 첫메세지
+▪️ 토론은 정해진 순서대로 진행되고, 각 순서마다 시간제한이 있어 시간 초과시 감점됩니다.
+▪️ 토론을 시작하기 전에 사전 조사를 먼저 하셔도 좋습니다.
+▪️ 토론 순서를 확인하시려면 '토론 순서' 버튼을, 토론을 시작하시려면 '토론 시작' 버튼을 눌러주세요.`,  // ChatGPT 첫메세지
       sentTime: "just now",                                                                 // 메시지가 보내진 시간
       sender: "Kurung"                                                                      // 메시지를 보낸 사용자
     }
   ]);
 
-  
+
   //[STATE] check the GPT is typing
   const [isTyping, setisTyping] = useState(false);
 
   //[FUNCTION]: send message to ChatGPT, and add prompt
   const handleSend = async (message) => {
 
-    if (message === "") {                                                             
+    if (message === "") {
       message = "의견을 입력하지 못했습니다. " + COMMON_PROMPT[DebateOrder_count];
-    } else {                                                                         
+    } else {
       message += COMMON_PROMPT[DebateOrder_count];
     }
 
@@ -150,7 +151,7 @@ function ChatBot(props) {
     const newMessage = {
       message,
       direction: 'outgoing', // 메시지 방향 (outgoing: 발신, incoming: 수신)
-      sender: "user",        
+      sender: "user",
     };
 
     const newMessages = [...messages, newMessage];
@@ -276,9 +277,9 @@ function ChatBot(props) {
             clearInterval(countdown)
           } else if (DebateOrderNum < 10) {
             clearInterval(countdown)
-            if(!isDebateStart){
+            if (!isDebateStart) {
               setConfirm(false)
-            }else{
+            } else {
               setConfirm(true)
             }
             count += 1
@@ -335,6 +336,7 @@ function ChatBot(props) {
 
   //Open level Done 
   const [newScore, setNewScore] = useState(85)
+  const [gotCoinNum, setGotCoinNum] = useState(0)
 
   const Level_Done = async () => {
     try {
@@ -351,38 +353,15 @@ function ChatBot(props) {
         Score_Positive: parseInt(matchPositive[1], 10),
         Score_ListPost: parseInt(matchListPost[1], 10),
       }, { merge: true });
-      
+
+      //코인 개수 = 최종 점수 / 10 (ex. 960점 = 96코인)
+      const SetCoins = db.collection('users').doc(user.uid)
+      await SetCoins.update({
+        Coins: firebase.firestore.FieldValue.increment(match[1] / 10)
+      })
+
+      setGotCoinNum(match[1] / 10)
       setDoneButton(true)
-
-      if (match[1] <= '500') {
-        const SetCoins = db.collection('users').doc(user.uid)
-        await SetCoins.update({
-          Coins: firebase.firestore.FieldValue.increment(50)
-        })
-      } else if (match[1] > '500' && match[1] <= '600') {
-        const SetCoins = db.collection('users').doc(user.uid)
-        await SetCoins.update({
-          Coins: firebase.firestore.FieldValue.increment(100)
-        })
-
-      } else if (match[1] > '600' && match[1] <= '700') {
-        const SetCoins = db.collection('users').doc(user.uid)
-        await SetCoins.update({
-          Coins: firebase.firestore.FieldValue.increment(150)
-        })
-      }
-      else if (match[1] > '700' && match[1] <= '850') {
-        const SetCoins = db.collection('users').doc(user.uid)
-        await SetCoins.update({
-          Coins: firebase.firestore.FieldValue.increment(200)
-        })
-      }
-      else if (match[1] > '850') {
-        const SetCoins = db.collection('users').doc(user.uid)
-        await SetCoins.update({
-          Coins: firebase.firestore.FieldValue.increment(250)
-        })
-      }
     }
     catch (error) {
       console.log(error)
@@ -402,16 +381,14 @@ function ChatBot(props) {
 
 
   const [coins, setCoins] = useState('')
+  
   useEffect(() => {
     const getinfo = db.collection("users").doc(user.uid)
     getinfo.onSnapshot((doc) => {
-      if (doc.exists) {
-        return setCoins(doc.data().Coins)
-      }
-
+      if (doc.exists) setCoins(doc.data().Coins);
     })
-
   }, [user.uid])
+
   const HandleBuyTime = async () => {
     const send = db.collection('users').doc(user.uid)
     switch (selectedValue) {
@@ -432,8 +409,8 @@ function ChatBot(props) {
           setSelectedValue('')
         }
 
-
         break;
+
       case '3':
 
         if (coins === 0 || setCoins < 5) {
@@ -517,7 +494,7 @@ function ChatBot(props) {
                   matchExpress = regexExpress.exec(message.message);
                   matchPositive = regexPostive.exec(message.message);
                   matchListPost = regexLisPost.exec(message.message);
-                  if(match && match[1]){
+                  if (match && match[1]) {
                     finalScore = parseInt(match[1], 10) + minus
                     console.log(matchLogic[1])
                   } else {
@@ -547,7 +524,7 @@ function ChatBot(props) {
                   {DebateOrderNum == 1 &&
                     <button id="debate_start_button"
                       className="m-2 p-2 bg-orange-300 rounded-xl shadow-md"
-                      onClick={() => { handleSend('이해했습니다! 시작해요🙂'); setIsDebateStart(true)}}
+                      onClick={() => { handleSend('이해했습니다! 시작해요🙂'); setIsDebateStart(true) }}
                     >토론 시작</button>}
                 </div>
               </div>
@@ -562,14 +539,14 @@ function ChatBot(props) {
               </div>
 
             </MessageList>
-            {isTyping === true ?
-              (<MessageInput placeholder="지금은 입력할 수 없습니다." disabled/>)
+            {isTyping === true || isDebateStart === false || confirm === true || done === true ?
+              (<MessageInput placeholder="지금은 작성할 수 없습니다" disabled />)
               : (<MessageInput onChange={(value) => setUserText(value)} placeholder="입력해 주세요" onSend={handleSend} />)}
           </ChatContainer>
         </MainContainer>
       </div>
       {props.isModal && (<WarningModal setModal={props.Modal} />)}
-      {doneButton && <ModalScore src={props.src} points={finalScore} level={props.Level} category={props.category} setModal={props.setScore} count={count} minus={minus} />}
+      {doneButton && <ModalScore src={props.src} points={finalScore} level={props.Level} category={props.category} setModal={props.setScore} count={count} minus={minus} coinNum={gotCoinNum} />}
       {openBuyTime && (<BuyTime value={selectedValue} onChange={handleSelectChange} setBuyTime={GobackTo} HandleBuyTime={HandleBuyTime} setOff={setOpenBuyTime} />)}
       {confirm && (<Confirmation ConfirBuyTime={HandleConfirmBuyTime} ConfirmSubmit={HandleConfirmSubmit} />)}
 
