@@ -126,9 +126,9 @@ function ChatBot(props) {
 저는 ${CHAT_POSITION}측이고, <b>${user.displayName}님은 ${USER_POSITION}측</b>입니다.\n
 ▪️ 토론은 정해진 순서대로 진행되고, 각 순서마다 시간제한이 있어 시간 초과시 감점됩니다.
 ▪️ 토론을 시작하기 전에 사전 조사를 먼저 하셔도 좋습니다.
-▪️ 토론 순서를 확인하시려면 '토론 순서' 버튼을, 토론을 시작하시려면 '토론 시작' 버튼을 눌러주세요.`,  // ChatGPT 첫메세지
-      sentTime: "just now",                                                                 // 메시지가 보내진 시간
-      sender: "Kurung"                                                                      // 메시지를 보낸 사용자
+▪️ 토론 순서를 확인하시려면 <label style="color:orange;"><b>토론 순서</b></label> 버튼을, 토론을 시작하시려면 <label style="color:orange;"><b>토론 시작</b></label> 버튼을 눌러주세요.`,  // ChatGPT 첫메세지
+      sentTime: "just now",                                                                   // 메시지가 보내진 시간
+      sender: "Kurung"                                                                        // 메시지를 보낸 사용자
     }
   ]);
 
@@ -237,25 +237,23 @@ function ChatBot(props) {
   const [sendmessage, setSendmessage] = useState(false)
   const [userText, setUserText] = useState('')
 
-
-
+  //시간 초과시 그냥 제출 (-30 감점)
   const HandleConfirmSubmit = () => {
     setConfirm(!confirm)
     handleSend(userText)
     minus = minus - 30
-
   }
 
+  //시간 초과시 시간 구매 (BuyTime 모달)
   const HandleConfirmBuyTime = () => {
     setOpenBuyTime(!openBuyTime)
     setConfirm(!confirm)
   }
 
+  //시간 구매 중 X버튼
   const GobackTo = () => {
     setConfirm(true)
   }
-  /////////////////////////////////// 
-
 
 
   useEffect(() => {
@@ -381,7 +379,7 @@ function ChatBot(props) {
 
 
   const [coins, setCoins] = useState('')
-  
+
   useEffect(() => {
     const getinfo = db.collection("users").doc(user.uid)
     getinfo.onSnapshot((doc) => {
@@ -389,62 +387,28 @@ function ChatBot(props) {
     })
   }, [user.uid])
 
+  //메소드: 시간을 추가하는 메소드
   const HandleBuyTime = async () => {
     const send = db.collection('users').doc(user.uid)
-    switch (selectedValue) {
-      case '2':
-
-        if (coins === 0 || coins < 3) {
-          return alert('코인이 부족합니다')
-
-        } else if (coins >= 3) {
-          await send.update({
-            Coins: coins - 3,
-          })
-          setMinutes(0)
-          setSeconds(30)
-          alert('시간 추가를 성공했습니다 ⏰')
-          minus = minus - 20
-          setOpenBuyTime(false)
-          setSelectedValue('')
+    console.log(selectedValue+'초 구매')
+    if (coins < Number(selectedValue)) {
+      return alert('코인이 부족합니다 😢')
+    
+    } else if (coins >= Number(selectedValue)) {
+      await send.update({
+        Coins: coins - Number(selectedValue),
+      })
+        //시간이 분단위면 '분'만 추가, 초단위면 '초'만 추가
+        if(Number(selectedValue) > 30){
+          setMinutes(Number(selectedValue)/60)
+        }else{
+          setSeconds(Number(selectedValue))
         }
-
-        break;
-
-      case '3':
-
-        if (coins === 0 || setCoins < 5) {
-          return alert('코인이 부족합니다')
-        } else if (coins >= 5) {
-          await send.update({
-            Coins: coins - 5,
-          })
-          setMinutes(0)
-          setSeconds(40)
-          alert('시간 추가를 성공했습니다 ⏰')
-          setOpenBuyTime(false)
-          minus = minus - 20
-          setSelectedValue('')
-        }
-        break;
-      case '5':
-
-        if (coins === 0 || coins < 6) {
-          return alert('코인이 부족합니다')
-        } else if (coins > 6) {
-          await send.update({
-            Coins: coins - 6,
-          })
-          setMinutes(0)
-          setSeconds(50)
-          alert('시간 추가를 성공했습니다 ⏰')
-          setOpenBuyTime(false)
-          minus = minus - 20
-          setSelectedValue('')
-        }
-        break;
-      default:
-        return alert('시간을 선택해주세요 🦊')
+      alert('시간 추가를 성공했습니다 🙂')
+      setOpenBuyTime(false)
+      setSelectedValue('')
+    } else {
+      return alert('시간을 선택해주세요 🦊')
     }
   }
 
@@ -498,7 +462,7 @@ function ChatBot(props) {
                     finalScore = parseInt(match[1], 10) + minus
                     console.log(matchLogic[1])
                   } else {
-                    console.log("총점수가 없습니다")
+                    finalScore = 0;
                   }
                 }
 

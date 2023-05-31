@@ -22,7 +22,7 @@ function ModalScore(props) {
     'Level_2': 700,
     'Level_3': 600
   }
-  
+
   useEffect(() => {
   if (props.points >= StandardOfClear[props.level]) {
     setIsClear(true)
@@ -64,10 +64,10 @@ function ModalScore(props) {
           <div className='relative justify-center items-center'>
 
             <img src={LetterSrc} className='ml-20 w-[115px] h-[100px]' />
-            <label className='text-xl font-bold mt-3'>총점🔎 : {props.points} 점</label>
-            <label className='text-xl font-bold mt-3'>코인🪙 : {props.points} 개</label>
+            <div className='text-xl font-bold mt-5'>총점📝 : {props.points}점</div>
+            <div className='text-xl font-bold'>코인🪙 : {props.points/10}개</div>
             {props.count === 0 ? console.log("시간초과없음")
-              : (<label className='font-bold'>시간초과 <label className='text-red-400'>{props.count}</label> 회로 <label className='text-red-400'>{props.minus}</label> 점 감점되었습니다.</label>)}
+              : (<div className='font-bold mt-5'>시간초과 <label className='text-red-400'>{props.count}</label> 회로 <label className='text-red-400'>{props.minus}</label> 점 감점되었습니다.</div>)}
             <button className='p-1 bg-orange-200 w-4/6 mt-5 rounded-xl font-bold text-xl hover:text-white hover:bg-orange-300'
               onClick={() => navigate('/category', { state: { src: props.src, level: props.level, Category: props.category } })}>OK</button>
           </div>

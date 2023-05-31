@@ -81,7 +81,8 @@ function CategoryPage() {
 
       try {
         await TopicRef.get().then((doc) => {
-          setTopic(doc.data()[Level][RandomTopicNum])
+          const TopicName = doc.data()[Level][RandomTopicNum];
+          setTopic(TopicName)
           console.log('토론주제 : '+ topic)
         })
       } catch (error) {
@@ -159,7 +160,6 @@ function CategoryPage() {
             <img className='w-9 h-8 hidden lg:block' src={Logo} />
             <div className='flex-1 text-lg md:text-xl text-white'>카테고리 : {Category}</div>
             <button className='border-orange-300 border-2 p-1 rounded-full hover:bg-orange-300 hover:text-white'
-              // onClick={()=>navigate('/home')}
               onClick={() => navigate('/home')}
             >
               <FaHome className='w-8 h-7' />
@@ -172,7 +172,6 @@ function CategoryPage() {
         <div className=' relative w-5/6 mx-auto justify-center items-center'>
           {confirm ? <Roulette /> : <ConfirmMessage />}
         </div>
-
       </div>
     </motion.div>
   )
