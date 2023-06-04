@@ -4,9 +4,6 @@ import 'react-circular-progressbar/dist/styles.css';
 
 
 function Timer(props) {
-
-
-
   return (
     <div className='w-[70px] h-[70px] bg-white flex justify-center items-center'>
         <div className='flex items-center h-5/6 bg-white'>
@@ -17,10 +14,8 @@ function Timer(props) {
                   pathColor:props.setcolor,
                   trailColor:'#CCCBCA',
             })}/>
-
           </div>
         </div>
-        
     </div>
   )
 }

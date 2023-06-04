@@ -30,14 +30,9 @@ function BuyTime({ value, onChange, setBuyTime, HandleBuyTime, setOff }) {
         }
       }
     })
- 
-    
   }, [])
 
-  
-
   return (
-    
     <div className='justify-center flex' >
       <div className='flex h-full w-full fixed items-center justify-center opacity-90 bg-orange-100 top-0 left-0'></div>
       <motion.div className='flex  border-2 border-gray-200 fixed p-2 bg-white mx-auto w-5/6 h-4/6 rounded-3xl text-center flex-col top-[15%]
@@ -64,7 +59,8 @@ function BuyTime({ value, onChange, setBuyTime, HandleBuyTime, setOff }) {
           <div className='p-3 w-full'/>
           <div className='flex items-center justify-center w-5/6 mx-auto gap-3'>
             <select className='w-4/6 p-2 rounded-xl outline-none shadow-xl border-2 border-gray-300 hover:bg-orange-100 text-center text-base' value={value} onChange={onChange}>
-              <option selected className='text-base' value='30'>⏰30초</option>
+              
+              <option className='text-base' value='30'>⏰30초</option>
               <option className='text-base' value='60'>⏰1분</option>
               <option className='text-base' value='180'>⏰3분</option>
               <option className='text-base' value='300'>⏰5분</option>
@@ -72,7 +68,7 @@ function BuyTime({ value, onChange, setBuyTime, HandleBuyTime, setOff }) {
           </div>
           <div className='p-3 w-full'/>
           {value && canBuy && <label className='font-bold text-lg'>⏰{value}초를 구매하시겠습니까?: <label className='text-red-600 text-xl font-bold'>🪙{value}코인</label></label>}
-          {canBuy && <button className='p-2 w-3/6 mt-5 rounded-xl font-bold text-lg bg-orange-200 hover:text-white hover:bg-orange-300' onClick={() => { HandleBuyTime() }}>구매하기</button>}
+          {canBuy && <button className='p-2 w-3/6 mt-5 rounded-xl font-bold text-lg bg-orange-200 hover:text-white hover:bg-orange-300' onClick={() => { HandleBuyTime(value) }}>구매하기</button>}
           {/* <div className='bg-blue-200 w-5/6 p-5'>
          <input type="text" value={value} onChange={onChange} />
         </div>  */}

@@ -21,7 +21,6 @@ function CategoryPage() {
   const Character = location.state.character
   const Level = location.state.Level
 
-
   //컴포넌트 : 확인 메세지
   const ConfirmMessage = () => {
     return (
@@ -32,7 +31,7 @@ function CategoryPage() {
         <div className='flex-row pt-8'>
           <button className='transition ease-in-out delay-150 hover:-translate-y-1 hover:scale-110 
                                w-[120px] h-[40px] border-2 border-inherit shadow-xl text-lg rounded-lg'
-            onClick={() => navigate('/category', { state: { src: Character } })}>NO</button>
+            onClick={() => navigate('/category', { state: { src: Character, category:Category, Level:Level } })}>NO</button>
           <button className='transition ease-in-out delay-150 hover:-translate-y-1 hover:scale-110
                                w-[120px] h-[40px] ml-10 shadow-xl bg-[#F29104] text-lg text-white rounded-lg'
             onClick={() => setConfirm(true)}>YES</button>
@@ -83,7 +82,7 @@ function CategoryPage() {
         await TopicRef.get().then((doc) => {
           const TopicName = doc.data()[Level][RandomTopicNum];
           setTopic(TopicName)
-          console.log('토론주제 : '+ topic)
+          console.log('토론주제 : ' + topic)
         })
       } catch (error) {
         console.log(error)

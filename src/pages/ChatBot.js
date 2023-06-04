@@ -12,9 +12,10 @@ import BuyTime from '../components/BuyTime';
 import ModalScore from '../components/ModalScore';
 import Confirmation from '../components/Confirmation';
 import WarningModal from '../components/WarningModal';
+import DebateOrderModal from '../components/DebateOrderModal'
 
-//나중에 env 파일에 넣어야 할 것 _ 은영
-const API_KEY = "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";
+
+const API_KEY = process.env.REACT_APP_CHATGPT_API_KEY;
 const db = firebase.firestore()
 
 //*Variables*//
@@ -32,12 +33,31 @@ var minus = 0
 var finalScore = 0
 var count = 0 // 메시지를 못보낸 순간
 
+//DB에서 가져온 프롬프트들을 저장할 변수
 let COMMON_PROMPT = '';
 let LEVEL_PROMPT_EDUCATION = '';
 let LEVEL_PROMPT_EXAMPLE = '';
 let LEVEL_PROMPT_MAXWORD = '';
 
+//클리어 점수 기준
+const StandardOfClear = {
+  'Tutorial': 600,
+  'Level_1': 700,
+  'Level_2': 800,
+  'Level_3': 900
+}
+
+//코인 부여 기준 (총점수에서 나누는 정수)
+const StandardOfCoin = {
+  'Tutorial': 20,
+  'Level_1': 15,
+  'Level_2': 10,
+  'Level_3': 5
+}
+
+
 function ChatBot(props) {
+
   const { user } = UserAuth();
 
   //토론 정보 프로퍼티로 받아오기
@@ -63,6 +83,7 @@ function ChatBot(props) {
 
   //토론 설정에 따른 프롬프트 받아오기
   useEffect(() => {
+    DebateOrder_count = 0; //렌더링 시 변수 초기화
     const CommonPromptRef = db.collection('Prompts').doc('CommonPrompt')
     const LevelPromptRef = db.collection('Prompts').doc(DEBATE_LEVEL)
 
@@ -221,8 +242,8 @@ function ChatBot(props) {
   const [isDebateStart, setIsDebateStart] = useState(false)
 
   //Variable: 시간 제한
-  var min = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-  var sdc = [0, 40, 20, 40, 30, 40, 40, 40, 40, 0]
+  var min = [0, 0, 1, 0, 3, 0, 1, 0, 3, 0, 0]
+  var sdc = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
   const [seconds, setSeconds] = useState(sdc[0]);
   const [minutes, setMinutes] = useState(min[0]);
 
@@ -339,7 +360,10 @@ function ChatBot(props) {
   const Level_Done = async () => {
     try {
       const db = firebase.firestore();
-      const userRef = db.collection('users').doc(user.uid).collection(props.Level).doc(props.categorie).collection(props.categorie).doc(DEBATE_TOPIC)
+      const userRef = db.collection('users').doc(user.uid).collection(props.Level).doc(props.categorie).collection(props.categorie).doc('Debate Updated')
+      
+      await userRef.delete()
+
       await userRef.set({
         Score: finalScore,
         categorie: props.categorie,
@@ -350,15 +374,27 @@ function ChatBot(props) {
         Score_Express: parseInt(matchExpress[1], 10),
         Score_Positive: parseInt(matchPositive[1], 10),
         Score_ListPost: parseInt(matchListPost[1], 10),
+        isClear: isClear,
       }, { merge: true });
 
-      //코인 개수 = 최종 점수 / 10 (ex. 960점 = 96코인)
+      //코인 개수 = 성공하면, 최종 점수 / 10 (ex. 960점 = 96코인)
+      //           실패하면, 코인 부여 없음
       const SetCoins = db.collection('users').doc(user.uid)
-      await SetCoins.update({
-        Coins: firebase.firestore.FieldValue.increment(match[1] / 10)
-      })
+      
+      //토론을 성공했을 경우
+      if(isClear){  
+        await SetCoins.update({
+          Coins: firebase.firestore.FieldValue.increment(parseInt(match[1] / StandardOfCoin[DEBATE_LEVEL]))
+        })
 
-      setGotCoinNum(match[1] / 10)
+        //난이도별로 코인 개수를 다르게 (어려운 레벨일수록 코인이 더 많다)
+        setGotCoinNum(parseInt(match[1] / StandardOfCoin[DEBATE_LEVEL]))
+      
+      //토론을 실패했을 경우
+      } else {    
+        console.log('토론 실패')
+      }
+
       setDoneButton(true)
     }
     catch (error) {
@@ -366,10 +402,10 @@ function ChatBot(props) {
     }
   }
   //////////////// Le code qui Permet de gerer le temps achete: 구매한 시간을 관리하는 코드
-  const [selectedValue, setSelectedValue] = useState('');
+  const [selectedValue, setSelectedValue] = useState(30);
   ///////////////////////////////
 
-  //메소드: 시간을 추가하는 메소드
+  //Buytime에서 선택한 시간을 가져오는 코드
   const handleSelectChange = event => {
     setSelectedValue(event.target.value);
   };
@@ -390,7 +426,7 @@ function ChatBot(props) {
   //메소드: 시간을 추가하는 메소드
   const HandleBuyTime = async () => {
     const send = db.collection('users').doc(user.uid)
-    console.log(selectedValue+'초 구매')
+    console.log(Number(selectedValue)+'초 구매')
     if (coins < Number(selectedValue)) {
       return alert('코인이 부족합니다 😢')
     
@@ -406,13 +442,25 @@ function ChatBot(props) {
         }
       alert('시간 추가를 성공했습니다 🙂')
       setOpenBuyTime(false)
-      setSelectedValue('')
+      setSelectedValue(30)
     } else {
       return alert('시간을 선택해주세요 🦊')
     }
   }
 
+  //난이도 실패, 성공 useState
+  const [isClear, setIsClear] = useState(false)
+  useEffect(() => {
+    if(finalScore > StandardOfClear[DEBATE_LEVEL]){
+      setIsClear(true)
+      console.log('난이도 클리어')
+    }else{
+      console.log('난이도 실패')
+    }
+   }, [finalScore])
 
+  //토론 순서 버튼 모달 관리 useState
+  const [openDebateOrder, setOpenDebateOrder] = useState(false)
 
   return (
     <div className='w-[95%] h-4/6 fixed mt-1'>
@@ -460,6 +508,8 @@ function ChatBot(props) {
                   matchListPost = regexLisPost.exec(message.message);
                   if (match && match[1]) {
                     finalScore = parseInt(match[1], 10) + minus
+                    //난이도 클리어/실패 처리
+                    
                     console.log(matchLogic[1])
                   } else {
                     finalScore = 0;
@@ -481,7 +531,8 @@ function ChatBot(props) {
                   {DebateOrderNum == 1 &&
                     <button id="debate_order_button"
                       className="m-2 p-2 bg-white rounded-xl border-solid border-2 border-orange-400 shadow-md"
-                      onClick={() => { alert('순서표입니다') }}
+                      onClick={() => { 
+                        setOpenDebateOrder(true)}}
                     >토론 순서</button>}
                 </div>
                 <div>
@@ -509,10 +560,12 @@ function ChatBot(props) {
           </ChatContainer>
         </MainContainer>
       </div>
-      {props.isModal && (<WarningModal setModal={props.Modal} />)}
-      {doneButton && <ModalScore src={props.src} points={finalScore} level={props.Level} category={props.category} setModal={props.setScore} count={count} minus={minus} coinNum={gotCoinNum} />}
+      {props.isModal && (<WarningModal setModal={props.Modal} />)} 
+      {openDebateOrder && <DebateOrderModal setOpenDebateOrder={setOpenDebateOrder} USER_POSITION={USER_POSITION} CHAT_POSITION={CHAT_POSITION}/> }
       {openBuyTime && (<BuyTime value={selectedValue} onChange={handleSelectChange} setBuyTime={GobackTo} HandleBuyTime={HandleBuyTime} setOff={setOpenBuyTime} />)}
       {confirm && (<Confirmation ConfirBuyTime={HandleConfirmBuyTime} ConfirmSubmit={HandleConfirmSubmit} />)}
+      {doneButton && <ModalScore src={props.src} points={finalScore} Level={props.Level} category={props.category} 
+                                 setModal={props.setScore} count={count} minus={minus} coinNum={gotCoinNum} isClear={isClear}/>}
 
     </div>
   )

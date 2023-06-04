@@ -1,21 +1,27 @@
 import React, { useState, useEffect } from 'react'
 import { UserAuth } from '../context/AuthContext'
+import { firebase } from '../firebase'
 import { useNavigate, useLocation } from 'react-router-dom'
 import Logo from '../assets/logo.png'
 import Coins from '../assets/coins.png'
 import { FaBars, } from 'react-icons/fa'
 import MenuBar from '../components/MenuBar'
+import Letter_A from '../assets/score/letter-a.png'
+import Letter_B from '../assets/score/letter-b.png'
+import Letter_C from '../assets/score/letter-c.png'
+import Letter_D from '../assets/score/letter-d.png'
+import Letter_E from '../assets/score/letter-e.png'
 
-import { firebase } from '../firebase'
 function CategoryPage() {
-  const { user } = UserAuth()
-  const [isMenuToggled, setIsMenuToggled] = useState(false)
   const navigate = useNavigate()
+  const [isMenuToggled, setIsMenuToggled] = useState(false)
+  const { user } = UserAuth();
+
 
   //파라미터 : 이미지 주소 갖고오기
   const location = useLocation()
   const image = location.state.src
-  const Level = location.state.level
+  const Level = location.state.Level
 
   //레벨별 학력 매치
   const Education = new Map([
@@ -41,6 +47,45 @@ function CategoryPage() {
     ['Level_3', 'D이상 (600/1000)']
   ])
 
+  const [isClear, setIsClear] = useState({
+    "과학과 기술": false,
+    "경제와 비즈니스": false,
+    "사회문제와 인권": false,
+    "자연과 환경": false,
+    "교육과 학습": false
+  });
+
+  const [score, setScore] = useState({
+    "과학과 기술": 0,
+    "경제와 비즈니스": 0,
+    "사회문제와 인권": 0,
+    "자연과 환경": 0,
+    "교육과 학습": 0
+  });
+
+  const topics = ["과학과 기술", "경제와 비즈니스", "사회문제와 인권", "자연과 환경", "교육과 학습"]
+
+  //firestore에서 카테고리 클리어 여부 갖고오기
+  useEffect(() => {
+    topics.map(async function (element) {
+      const isClearRef = db.collection('users').doc(user.uid).collection(Level).doc(element).collection(element).doc('Debate Updated')
+
+      isClearRef.onSnapshot((doc) => {
+        if (doc.exists) {
+          //카테고리 클리어 여부
+          let newIsClear = { ...isClear }
+          newIsClear[element] = doc.data().isClear
+          setIsClear(newIsClear)
+
+          //카테고리 점수
+          let newScore = { ...score }
+          newScore[element] = doc.data().Score
+          setScore(newScore)
+        }
+      })
+    });
+  }, [user.uid])
+
   //////Get score from firestore
   const db = firebase.firestore();
   const [coins, setCoins] = useState('')
@@ -48,21 +93,43 @@ function CategoryPage() {
     const getinfo = db.collection("users").doc(user.uid)
     getinfo.get()
       .then((doc) => {
-        return setCoins(doc.data().Coins)
+        if (doc.exists) {
+          return setCoins(doc.data().Coins)
+        }
       })
 
   }, [user.uid])
 
 
-
   //컴포넌트 : 카테고리 버튼
   const Category = (props) => {
+    //카테고리 점수에 따른 A~E 등급 이미지
+    let LetterSrc;
+    let LetterColor;
+    let CategoryScore = score[props.category]
+
+    if (0 <= CategoryScore && CategoryScore <= 600) { LetterSrc = Letter_E; LetterColor="border-red-200 hover:bg-red-200"}
+    else if (600 < CategoryScore && CategoryScore <= 700) { LetterSrc = Letter_D; LetterColor="border-green-200 hover:bg-green-200" }
+    else if (700 < CategoryScore && CategoryScore <= 800) { LetterSrc = Letter_C; LetterColor="border-blue-200 hover:bg-blue-200" }
+    else if (800 < CategoryScore && CategoryScore <= 900) { LetterSrc = Letter_B; LetterColor="border-yellow-200 hover:bg-yellow-200" }
+    else if (900 < CategoryScore && CategoryScore <= 1000) { LetterSrc = Letter_A; LetterColor="border-pink-200 hover:bg-pink-200" }
+
     return (
-      <button className='w-[200px] h-[50px] xl:w-[180px] xl:h-[150px] lg:text-lg
+      <button className={`w-[200px] h-[50px] xl:w-[180px] xl:h-[150px] lg:text-lg
                          transition ease-in-out delay-150 hover:-translate-y-1 hover:scale-110
-                       bg-white border-2 border-inherit shadow-lg rounded-xl'
-        onClick={() => { navigate('/setting', { state: { category: props.category, character: image, Level: Level } }) }}>
+                         border-2 border-inherit shadow-lg rounded-xl relative
+                       ${isClear[props.category] ? `${LetterColor} border-4` : 'bg-white'}`}
+
+        onClick={() => {
+            isClear[props.category] ? navigate('/isClear', { state: { category: props.category, character: image, Level: Level, score: score[props.category] } })
+                                    : navigate('/setting', { state: { category: props.category, character: image, Level: Level } })
+        }}>
         {props.category}
+        {isClear[props.category] ? 
+          <img src={LetterSrc} className='absolute -mt-12 ml-40
+                                          xl:-mt-24 xl:ml-32
+                                          w-[40px] h-[40px] 
+                                          lg:w-[50px] lg:h-[50px]'/> : null}
       </button>
     )
   }
