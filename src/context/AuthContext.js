@@ -39,12 +39,11 @@ export const AuthContextProvider = ({ children }) => {
               Email: user.email,
               Photo: user.photoURL,
               Coins: 500,
-              isClear: {
-                Tutorial:false,
-                 Level_1:0, 
-                 Level_2:0, 
-                 Level_3:0
-              },
+              Tutorial:false,
+              Level_1:0, 
+              Level_2:0, 
+              Level_3:0,
+              
             }, { merge: true })
               .then(() => {
                 console.log("Score initialized!");

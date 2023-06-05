@@ -25,6 +25,7 @@ function RatingPage() {
     const db = firebase.firestore();
 
     ///Get data from firestore 
+    const medal = [F_place, S_place, T_place]
 
     useEffect(() => {
       const getinfo = db.collection("users");
@@ -98,7 +99,7 @@ function RatingPage() {
               data.map((data,idx)=>(
 
                 <div key={idx} className=' bg-gray-200 mx-auto   p-2 rounded-xl  flex w-full justify-between gap-3 items-center'>
-                    <img className='w-10 h-10'  src={F_place}/>
+                    {medal[idx] && <img className='w-10 h-10' src={medal[idx]}/>}
                     <div className='flex-1'>{data.Name}</div>
                     <div>{data.Coins}</div>
               </div>

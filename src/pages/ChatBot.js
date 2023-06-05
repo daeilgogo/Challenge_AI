@@ -379,12 +379,15 @@ function ChatBot(props) {
 
       //코인 개수 = 성공하면, 최종 점수 / 10 (ex. 960점 = 96코인)
       //           실패하면, 코인 부여 없음
-      const SetCoins = db.collection('users').doc(user.uid)
+      const userReffordone = db.collection('users').doc(user.uid)
       
       //토론을 성공했을 경우
       if(isClear){  
-        await SetCoins.update({
+        await userReffordone.update({
           Coins: firebase.firestore.FieldValue.increment(parseInt(match[1] / StandardOfCoin[DEBATE_LEVEL]))
+        })
+        await userReffordone.update({
+          [DEBATE_LEVEL]: firebase.firestore.FieldValue.increment(finalScore)
         })
 
         //난이도별로 코인 개수를 다르게 (어려운 레벨일수록 코인이 더 많다)

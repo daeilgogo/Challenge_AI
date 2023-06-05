@@ -48,42 +48,40 @@ function Home() {
    const levels = ["Level_1", "Level_2", "Level_3"]
    const topics = ["과학과 기술", "경제와 비즈니스", "사회문제와 인권", "자연과 환경", "교육과 학습"]
    const [totalScore, setTotalScore] = useState(0)
-
+   
    //firestore에서 카테고리 클리어 여부 갖고오기
-   useEffect(() => {
-      levels.map(async function (L_element) {
+   // useEffect(() => {
+   //    levels.map(async function (L_element) {
+   //       topics.map(async function (element) {
+   //          await db.collection('users').doc(user.uid).collection(L_element).doc(element).collection(element).doc('Debate Updated').get().then((doc)=>{
+   //             if (doc.exists) {
+   //                if(doc.data().isClear){
+   //                   console.log('문서있음')
+   //                   sum += 1;
+   //                   console.log(sum)
+   //                }
+   //             } else {
+                  
+   //             }
+   //          }).then(()=>{
+   //             console.log('참조:'+sum)
+   //          })
+   //       })
+   //       sum = 0;
 
-         let sum = 0;
+   //       // let newlevelObj = { ...levelObj }
+   //       // newlevelObj[L_element] = sum
+   //       // setLevelObj(newlevelObj)
+   //       // console.log(levelObj)
 
-         topics.map(async function (element) {
-            const isClearRef = db.collection('users').doc(user.uid).collection(L_element).doc(element).collection(element).doc('Debate Updated').get()
+   //       // const ref = db.collection('users').doc(user.uid).set({
+   //       //    isClear:{
+   //       //       [L_element]: sum
+   //       //    }
+   //       // }, { merge: true });
+   //    })
 
-
-            if (isClearRef.exists) {
-
-               //카테고리 점수 합산
-               sum += isClearRef.data().Score
-               console.log(sum)
-
-            } else {
-               console.log('문서없음')
-            }
-
-         })
-
-         let newlevelObj = { ...levelObj }
-         newlevelObj[L_element] = sum
-         setLevelObj(newlevelObj)
-         console.log(levelObj)
-
-         // const ref = db.collection('users').doc(user.uid).set({
-         //    isClear:{
-         //       [L_element]: sum
-         //    }
-         // }, { merge: true });
-      })
-
-   }, [])
+   // }, [user.uid])
 
 
 
@@ -98,7 +96,6 @@ function Home() {
             if (doc.exists) {
                return setCoins(doc.data().Coins)
             }
-
          })
 
    }, [user.uid])
