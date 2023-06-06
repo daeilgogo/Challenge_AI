@@ -35,6 +35,26 @@ function Review(props) {
         })
     }, [user.uid])
 
+    const saveToTxt=()=>{
+        const debateinfo = db.collection("users").doc(user.uid).collection(Level)
+        .doc(category).collection(category).doc('Debate Updated')
+
+        debateinfo.onSnapshot((doc) => {
+            if (doc.exists) {
+                setDebateInfo(doc.data().Message)
+                console.log(doc.data().Message)
+
+                const dataString = JSON.stringify(DebateInfo, null, 2);
+                const element = document.createElement('a');
+                const file = new Blob([dataString], { type: 'text/plain' });
+                element.href = URL.createObjectURL(file);
+                element.download = `${category}`+'.txt';
+                element.click();
+            }
+        })
+
+    }
+
     return (
         <div className='w-[95%] h-4/6 fixed mt-1'>
             <div className='flex items-center justify-center w-full gap-4'>
@@ -65,6 +85,7 @@ function Review(props) {
                                     className="m-2 p-2 bg-orange-300 rounded-xl"
                                     onClick={() => { navigate('/IsClear', { state: { category: category, character: image, Level: Level, score: score } }) }}
                                 >토론 다시보기 마치기</button>
+                                <button className="m-2 p-2 bg-orange-300 rounded-xl" onClick={saveToTxt}>내용 다운로드하기 📃</button>
                             </div>
                         </MessageList>
                     </ChatContainer>

@@ -10,7 +10,6 @@ import LevelDone from './pages/LevelDone';
 import CategoryPage from './pages/CategoryPage';
 import SettingDebatePage from './pages/SettingDebatePage';
 import IsClear from './pages/IsClear';
-import DebateState from './components/debateState';
 
 
 function App() {
@@ -26,7 +25,6 @@ function App() {
            <Route path='/congrat' element={<Protected><LevelDone/></Protected>}/>
            <Route path='/category' element={<Protected><CategoryPage/></Protected>}/>
            <Route path='/setting' element={<Protected><SettingDebatePage/></Protected>}/>
-           <Route path='/state' element={<Protected><DebateState/></Protected>}/>
           <Route path='/isclear' element={<Protected><IsClear/></Protected>}/>
          </Routes>
       </BrowserRouter>
