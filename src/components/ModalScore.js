@@ -42,17 +42,17 @@ function ModalScore(props) {
   
   ///////////Sound Effect
   useEffect(() => {
-    if(win === false ){
-      Winner.play();
+    if(isClear === false ){
+      Loser.play();
     }else{
-      Loser.play()
+      Winner.play()
     }
   },[])
   
   let LetterSrc;
 
 
-  if (0 <= props.points && props.points <= 600) { LetterSrc = Letter_E; setWin(true) }
+  if (0 <= props.points && props.points <= 600) { LetterSrc = Letter_E;}
   else if (600 < props.points && props.points <= 700) { LetterSrc = Letter_D}
   else if (700 < props.points && props.points <= 800) { LetterSrc = Letter_C }
   else if (800 < props.points && props.points <= 900) { LetterSrc = Letter_B }

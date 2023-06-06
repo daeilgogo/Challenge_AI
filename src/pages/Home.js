@@ -177,7 +177,7 @@ function Home() {
                   <div className='flex-1 text-lg md:text-xl text-white'>  도전하나요 , {user.displayName}</div>
                   <div className='flex gap-2'>
                      <img alt='Coins' src={Coins} />
-                     <div className='text-xl text-white'>{Coins}</div>
+                     <div className='text-xl text-white'>{coins}</div>
                      
                   </div>
                   <button className=' lg:block border-orange-300 border-2 p-1 rounded-full hover:bg-orange-300 hover:text-white'

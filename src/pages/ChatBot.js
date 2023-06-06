@@ -15,7 +15,7 @@ import WarningModal from '../components/WarningModal';
 import DebateOrderModal from '../components/DebateOrderModal'
 
 
-const API_KEY = '*******************';
+const API_KEY = '***********************';
 const db = firebase.firestore()
 
 //*Variables*//
@@ -300,8 +300,9 @@ function ChatBot(props) {
               setConfirm(false)
             } else {
               setConfirm(true)
+              count += 1
             }
-            count += 1
+           
             setSendmessage(!sendmessage)
           }
         }
