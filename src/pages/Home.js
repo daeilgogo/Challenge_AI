@@ -47,7 +47,7 @@ function Home() {
 
    const levels = ["Level_1", "Level_2", "Level_3"]
    const topics = ["과학과 기술", "경제와 비즈니스", "사회문제와 인권", "자연과 환경", "교육과 학습"]
-   const [totalScore, setTotalScore] = useState(0)
+   
    
    //firestore에서 카테고리 클리어 여부 갖고오기
    // useEffect(() => {
@@ -86,8 +86,8 @@ function Home() {
    /////////////////Somme de tout les Score 
 
 
-   const [data, setData] = useState([]);
-
+   const [totalScore, setTotalScore] = useState(0);
+ 
    let Level_ = ['Level_1', 'Level_2', 'Level_3'];
    let Categorie = [
      '과학과 기술',
@@ -99,7 +99,7 @@ function Home() {
  
    useEffect(() => {
      const fetchData = async () => {
-       const promises = [];
+       let sum = 0;
  
        for (let i = 0; i < Level_.length; i++) {
          for (let j = 0; j < Categorie.length; j++) {
@@ -111,27 +111,18 @@ function Home() {
              .collection(Categorie[j])
              .doc('Debate Updated');
  
-           const promise = dataRef.get().then((snapshot) => {
-             const score = snapshot.data()?.Score || 0;
-             return score;
-           });
- 
-           promises.push(promise);
+           const snapshot = await dataRef.get();
+           const score = snapshot.data()?.Score || 0;
+           sum += score;
          }
        }
  
-       const results = await Promise.all(promises);
-       const scoresSum = results.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
-       setData(results);
-       console.log(`Sum of all Scores: ${scoresSum}`);
+       setTotalScore(sum);
+       console.log(`Sum of all Scores: ${sum}`);
      };
  
      fetchData();
    }, [user.uid]);
-
-
-
-
 
 
 
@@ -186,7 +177,8 @@ function Home() {
                   <div className='flex-1 text-lg md:text-xl text-white'>  도전하나요 , {user.displayName}</div>
                   <div className='flex gap-2'>
                      <img alt='Coins' src={Coins} />
-                     <div className='text-xl text-white'>{coins}</div>
+                     <div className='text-xl text-white'>{Coins}</div>
+                     
                   </div>
                   <button className=' lg:block border-orange-300 border-2 p-1 rounded-full hover:bg-orange-300 hover:text-white'
                      onClick={() => setIsMenuToggled(!isMenuToggled)}>
