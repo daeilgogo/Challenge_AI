@@ -1,14 +1,14 @@
 import React, {useEffect, useState,useRef} from 'react'
 import { UserAuth } from '../context/AuthContext'
+import { useNavigate } from 'react-router-dom'
 import Logo from '../assets/logo.png'
 import Coins from '../assets/coins.png'
 import { FaBars, } from 'react-icons/fa'
 import MenuBar from '../components/MenuBar'
 import { motion } from 'framer-motion'
 import {firebase} from '../firebase'
-import Chart from 'chart.js/auto';
-import GitHubContributionsGraph from '../components/Confirmation'
-
+import Chart, { Title } from 'chart.js/auto';
+import { Button } from '@chatscope/chat-ui-kit-react'
 
 
 const options = [
@@ -48,22 +48,39 @@ function GraphicPage() {
       const db = firebase.firestore();
       const data =  db.collection("users").doc(user.uid).collection(Level).doc(Categorie).collection(Categorie)
       await data.get().then((data)=>{
-      return setData(data.docs.map((doc) => doc.data()));
+         return  setData(data.docs.map((doc) => doc.data()));
      }
      )
+     setShow(false)
+   
     }
-//////////////////////////////////////////
+
+    const OpenGraph =async(Level,Categorie,Title) => {
+      const db = firebase.firestore();
+      const data =  db.collection("users").doc(user.uid).collection(Level).doc(Categorie).collection(Categorie).doc('Debate Updated')
+      data.get()
+      .then((doc)=>{
+            return  setTitle(doc.data()) 
+       })
+       setShow(true)
+   
+    }
+
 
 const [selectedOption, setSelectedOption] = useState(options[0].value);
-const [selectedOption_1, setSelectedOption_1] = useState(options[0].value);
+const [selectedOption_1, setSelectedOption_1] = useState(options_1[0].value);
+const [title, setTitle] = useState('Debate Updated');
+const [show,setShow]=useState(false)
 
 
+/////////
 const handleSelectChange = (event) => {
   setSelectedOption(event.target.value);
 };
 const handleSelectChange_Option_1 = (event) => {
   setSelectedOption_1(event.target.value);
 };
+
  ///////////////////////////////
 ///////////////////////////////////////////
 
@@ -73,18 +90,17 @@ const chartContainer = useRef(null);
 
 useEffect(() => {
   if (chartContainer && chartContainer.current) {
-    const labels = data.map((item) => item.Debate_Subject);
-    const values = data.map((item) => item.Score);
+  
     const newChartInstance = new Chart(chartContainer.current, {
       type: "bar",
       data: {
-        labels: labels,
+        labels: ['논리력','설득력','표현력','적극성','경청자세'],
         datasets: [
           {
-            label: selectedOption_1,
-            data: values,
-            backgroundColor: ['green','orange','red','yellow'],
-            borderColor: "rgba(255, 99, 132, 1)",
+            label: title.Debate_Subject,
+            data:[title.Score_Logic,title.Score_PerPower,title.Score_Express,title.Score_Positive,title.Score_ListPost],
+            backgroundColor: ['green','orange','red','yellow','blue'],
+            borderColor: "white",
             borderWidth: 1,
           },
         ],
@@ -93,7 +109,7 @@ useEffect(() => {
         scales: {
           y: {
             beginAtZero: true,
-            suggestedMax: 100,
+            suggestedMax: 200,
           },
         },
       },
@@ -103,7 +119,7 @@ useEffect(() => {
       newChartInstance.destroy();
     };
   }
-}, [data]);
+}, [title,user.uid]);
 
 
       
@@ -147,24 +163,57 @@ useEffect(() => {
             <label htmlFor="select-example" className=''>옵션을 선택하세요:</label>
                 <select id="select-example" value={selectedOption} onChange={handleSelectChange} className='w-5/6 bg-green-400 p-1 rounded-xl shadow-xl outline-none hover:bg-green-300'>
                      {options.map((option) => (
-                    <option key={option.value} value={option.value}>{option.label}</option>
+                    <option selected='selected' key={option.value} value={option.value}>{option.label}</option>
                    ))}
                 </select>
                 <select id="select-example" value={selectedOption_1} onChange={handleSelectChange_Option_1} className='w-5/6 bg-green-400 p-1 rounded-xl shadow-xl outline-none hover:bg-green-300'>
                      {options_1.map((option) => (
-                    <option key={option.value} value={option.value}>{option.label}</option>
+                    <option selected='selected' key={option.value} value={option.value}>{option.label}</option>
                    ))}
                 </select>
+
+
+               
             <div>
                 <button className='bg-orange-300 rounded-xl p-1 hover:bg-orange-200' onClick={()=>BringGraph(selectedOption,selectedOption_1)}>그래프 보기</button>
             </div>
-          
-          <div className='w-4/6 h-4/6'>
-           
-            <div>
-               <canvas ref={chartContainer} className=''/>
+
+             <div className='w-full items-center flex gap-5 justify-center '>
+                  {
+                    data.map((items,idx)=>(
+                      <button
+                         onClick={()=>OpenGraph(selectedOption,selectedOption_1,items.Debate_Subject)}
+                      key={idx} className='p-1 gap-5 bg-red-300 flex rounded-xl hover:bg-red-400'>
+                        {
+                          items.Debate_Subject
+                        }
+                      </button>
+                    ))
+                  }
             </div>
-           
+          
+          <div className='w-5/6  flex mx-auto gap-10'>
+            {/* {
+              data.map((items,idx)=>(
+                <div className='bg-gray-50 p-1 gap-5'>
+                  <div className='text-center text-orange-400'>{items.Debate_Subject}</div>
+                  <div className='mt-5'> 논리력:{items.Score_Logic}</div>
+                  <div className='mt-5'> 설득력:{items.Score_PerPower}</div>
+                  <div className='mt-5'> 표현력:{items.Score_Express}</div>
+                  <div className='mt-5'> 적극성:{items.Score_Positive}</div>
+                  <div className='mt-5'> 경청자세:{items.Score_Express}</div>
+                  <div className='mt-10'> 총점수:{items.Score}</div>
+                </div>
+                
+              ))
+            }
+            */}
+             
+         
+           { show && (<div className='w-4/6 mx-auto'>
+               <canvas ref={chartContainer} className=''/>
+            </div>)
+           }
           </div>
 
           </div> 

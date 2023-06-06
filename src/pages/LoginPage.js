@@ -3,7 +3,6 @@ import { GoogleButton } from 'react-google-button'
 import { UserAuth } from '../context/AuthContext'
 import { useNavigate } from 'react-router-dom'
 import Logo from '../assets/logo.png'
-
 import { motion } from 'framer-motion'
 
 
@@ -42,14 +41,28 @@ function LoginPage() {
                     opacity: 0, x: -50,
                 },
                 visible: {
-                    opacity: 1, x: 0
+                    opacity: 1, x: 0,
                 }
             }}>
             <div className=' flex w-5/6 lg:w-3/6 bg-white  h-5/6 items-center justify-center shadow-2xl rounded-2xl 
                             gap-10 flex-col'>
-                <div className='justify-center items-center flex'>
+                <motion.div
+                 className='justify-center items-center flex'
+                 animate={{
+                    scale: [1, 1.5, 1.5, 1, 1],
+                    rotate: [0, 0, 180, 180, 0],
+                    borderRadius: ["0%", "0%", "30%", "30%", "0%"]
+                  }}
+                  transition={{
+                    duration: 2,
+                    ease: "easeInOut",
+                    times: [0, 0.2, 0.5, 0.8, 1],
+                    repeat: 0,
+                    repeatDelay: 0.3
+                  }}
+                 >
                     <img src={Logo} />
-                </div>
+                </motion.div>
                 {/* <div className='flex flex-col  gap-3 w-4/6 mt-5'>
               <input placeholder='이메일' 
               type='email'

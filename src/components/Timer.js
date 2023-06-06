@@ -4,23 +4,18 @@ import 'react-circular-progressbar/dist/styles.css';
 
 
 function Timer(props) {
-
-
-
   return (
-    <div className='w-[95%] mx-auto bg-white flex justify-center items-center'>
-        <div className='flex w-full justify-between items-center h-5/6 bg-white gap-5'>
+    <div className='w-[70px] h-[70px] bg-white flex justify-center items-center'>
+        <div className='flex items-center h-5/6 bg-white'>
           <div>
             <CircularProgressbar  text={props.minutes+':'+ props.seconds} 
                  value={props.percentage}
-                 className='w-20 h-20 p-1 ' styles={buildStyles({
+                 className='p-1' styles={buildStyles({
                   pathColor:props.setcolor,
                   trailColor:'#CCCBCA',
             })}/>
-
           </div>
         </div>
-        
     </div>
   )
 }
