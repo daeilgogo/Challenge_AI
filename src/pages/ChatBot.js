@@ -15,7 +15,7 @@ import WarningModal from '../components/WarningModal';
 import DebateOrderModal from '../components/DebateOrderModal'
 
 
-const API_KEY = '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'
+const API_KEY = '**************************';
 const db = firebase.firestore()
 
 //*Variables*//
@@ -41,7 +41,7 @@ let LEVEL_PROMPT_MAXWORD = '';
 
 //클리어 점수 기준
 const StandardOfClear = {
-  'Tutorial': 600,
+  'Tutorial': 100,
   'Level_1': 700,
   'Level_2': 800,
   'Level_3': 900
@@ -222,7 +222,11 @@ function ChatBot(props) {
         },
         body: JSON.stringify(apiRequestBody) // 요청 바디에 apiRequestBody를 JSON 형식으로 추가
       }).then((data) => {
-        return data.json(); // 응답 데이터를 JSON 형식으로 변환하여 반환
+        if(!data.ok){
+          throw Error(data.statusText);
+        }else{
+          return data.json(); // 응답 데이터를 JSON 형식으로 변환하여 반환
+        }
       }).then((data) => {
         console.log(data); // 응답 데이터를 콘솔에 출력
         setMessages([...chatMessages, {
@@ -233,6 +237,8 @@ function ChatBot(props) {
         setisTyping(false); // 타이핑 중인 상태를 false로 변경
         setMinutes(min[DebateOrderNum])
         setSeconds(sdc[DebateOrderNum])
+      }).catch((error) => {
+        console.log(error); // 오류를 콘솔에 출력
       });
   }
 
@@ -300,9 +306,8 @@ function ChatBot(props) {
               setConfirm(false)
             } else {
               setConfirm(true)
-              count += 1
             }
-           
+            count += 1
             setSendmessage(!sendmessage)
           }
         }
@@ -381,9 +386,17 @@ function ChatBot(props) {
       //코인 개수 = 성공하면, 최종 점수 / 10 (ex. 960점 = 96코인)
       //           실패하면, 코인 부여 없음
       const userReffordone = db.collection('users').doc(user.uid)
-      
+      //튜토리얼일 경우
+      if(props.Level === 'Tutorial'){
+        await userReffordone.update({
+          Coins: firebase.firestore.FieldValue.increment(parseInt(match[1] / StandardOfCoin[DEBATE_LEVEL]))
+        })
+        await userReffordone.update({
+          Tutorial: true
+        })
+      }
       //토론을 성공했을 경우
-      if(isClear){  
+      else if(isClear){  
         await userReffordone.update({
           Coins: firebase.firestore.FieldValue.increment(parseInt(match[1] / StandardOfCoin[DEBATE_LEVEL]))
         })
@@ -391,7 +404,7 @@ function ChatBot(props) {
           [DEBATE_LEVEL]: firebase.firestore.FieldValue.increment(finalScore)
         })
 
-        //난이도별로 코인 개수를 다르게 (어려운 레벨일수록 코인이 더 많다)
+        //난이도별로 코인 개수를 다르게 (어려운 레벨일수록 코인이 더 많음)
         setGotCoinNum(parseInt(match[1] / StandardOfCoin[DEBATE_LEVEL]))
       
       //토론을 실패했을 경우

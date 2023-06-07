@@ -23,11 +23,6 @@ function Review(props) {
     const Level = props.Level
     const score = props.score
 
-    ///////////////////
-
-
-
-
     //토론 내용 불러오기
     useEffect(() => {
         const debateinfo = db.collection("users").doc(user.uid).collection(Level).doc(category).collection(category).doc('Debate Updated')
@@ -36,14 +31,11 @@ function Review(props) {
             if (doc.exists) {
                 setDebateInfo(doc.data().Message)
                 console.log(doc.data().Message)
-
-
             }
         })
     }, [user.uid])
 
     const saveToTxt=()=>{
-
         const debateinfo = db.collection("users").doc(user.uid).collection(Level)
         .doc(category).collection(category).doc('Debate Updated')
 
@@ -93,7 +85,7 @@ function Review(props) {
                                     className="m-2 p-2 bg-orange-300 rounded-xl"
                                     onClick={() => { navigate('/IsClear', { state: { category: category, character: image, Level: Level, score: score } }) }}
                                 >토론 다시보기 마치기</button>
-                                 <button className="m-2 p-2 bg-orange-300 rounded-xl" onClick={saveToTxt}>내용 다운로드하기 📃</button>
+                                <button className="m-2 p-2 bg-orange-300 rounded-xl" onClick={saveToTxt}>내용 다운로드하기 📃</button>
                             </div>
                         </MessageList>
                     </ChatContainer>

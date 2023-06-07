@@ -106,6 +106,10 @@ function RatingPage() {
                 
               ))
             }
+              
+             
+
+             
           </div>
         </div>
     </motion.div>
