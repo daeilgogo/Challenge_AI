@@ -15,7 +15,7 @@ import WarningModal from '../components/WarningModal';
 import DebateOrderModal from '../components/DebateOrderModal'
 
 
-const API_KEY = '**************************';
+const API_KEY = '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'
 const db = firebase.firestore()
 
 //*Variables*//
