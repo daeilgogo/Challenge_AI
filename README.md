@@ -1,3 +1,7 @@
+# you can use this service at
+https://challenge-ai-game.vercel.app/home
+
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
