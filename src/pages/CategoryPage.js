@@ -14,10 +14,10 @@ import Letter_C from '../assets/score/letter-c.png'
 import Letter_D from '../assets/score/letter-d.png'
 import Letter_E from '../assets/score/letter-e.png'
 
-function CategoryPage() {
+function CategoryPage(props) {
   const navigate = useNavigate()
   const [isMenuToggled, setIsMenuToggled] = useState(false)
-  const [forRender,setforRender] = useState(false)
+  const [forRender, setforRender] = useState(false)
   const { user } = UserAuth();
 
 
@@ -68,30 +68,31 @@ function CategoryPage() {
 
   const topics = ["과학과 기술", "경제와 비즈니스", "사회문제와 인권", "자연과 환경", "교육과 학습"]
 
+
   //firestore에서 카테고리 클리어 여부 갖고오기
-  function getIsClear() {
+  useEffect(() => {
+  async function getIsClear() {
     topics.map(async function (element) {
       const isClearRef = db.collection('users').doc(user.uid).collection(Level).doc(element).collection(element).doc('Debate Updated')
 
-      isClearRef.onSnapshot((doc) => {
-        if (doc.exists) {
-          //카테고리 클리어 여부
-          let newIsClear = isClear
-          newIsClear[element] = doc.data().isClear
-          setIsClear(newIsClear)
+      await isClearRef.get()
+        .then((doc) => {
+          if (doc.exists) {
+            let newIsClear = isClear
+            newIsClear[element] = doc.data().isClear
+            setIsClear(newIsClear)
 
-          //카테고리 점수
-          let newScore = score
-          newScore[element] = doc.data().Score
-          setScore(newScore)
+            //카테고리 점수
+            let newScore = score
+            newScore[element] = doc.data().Score
+            setScore(newScore)
 
-          console.log(isClear)
-        }
-      })
-    });
+            console.log(isClear)
+          }
+        })
+    })
   }
   
-  useEffect(() => {
     getIsClear()
   }, [user.uid])
 
@@ -118,14 +119,14 @@ function CategoryPage() {
     let LetterSrc;
     let LetterColor;
     let CategoryScore = score[props.category]
-    
+
     //카테고리 점수에 따른 A~E 등급 이미지
-    if (0 <= CategoryScore && CategoryScore <= 600) { LetterSrc = Letter_E; LetterColor="border-red-200 hover:bg-red-200"}
-    else if (600 < CategoryScore && CategoryScore <= 700) { LetterSrc = Letter_D; LetterColor="border-green-200 hover:bg-green-200" }
-    else if (700 < CategoryScore && CategoryScore <= 800) { LetterSrc = Letter_C; LetterColor="border-blue-200 hover:bg-blue-200" }
-    else if (800 < CategoryScore && CategoryScore <= 900) { LetterSrc = Letter_B; LetterColor="border-yellow-200 hover:bg-yellow-200" }
-    else if (900 < CategoryScore && CategoryScore <= 1000) { LetterSrc = Letter_A; LetterColor="border-pink-200 hover:bg-pink-200" }
-  
+    if (0 <= CategoryScore && CategoryScore <= 600) { LetterSrc = Letter_E; LetterColor = "border-red-200 hover:bg-red-200" }
+    else if (600 < CategoryScore && CategoryScore <= 700) { LetterSrc = Letter_D; LetterColor = "border-green-200 hover:bg-green-200" }
+    else if (700 < CategoryScore && CategoryScore <= 800) { LetterSrc = Letter_C; LetterColor = "border-blue-200 hover:bg-blue-200" }
+    else if (800 < CategoryScore && CategoryScore <= 900) { LetterSrc = Letter_B; LetterColor = "border-yellow-200 hover:bg-yellow-200" }
+    else if (900 < CategoryScore && CategoryScore <= 1000) { LetterSrc = Letter_A; LetterColor = "border-pink-200 hover:bg-pink-200" }
+    
     return (
       <button className={`w-[200px] h-[50px] xl:w-[180px] xl:h-[150px] lg:text-lg
                          transition ease-in-out delay-150 hover:-translate-y-1 hover:scale-110
@@ -133,11 +134,11 @@ function CategoryPage() {
                        ${isClear[props.category] ? `${LetterColor} border-4` : 'bg-white'}`}
 
         onClick={() => {
-            isClear[props.category] ? navigate('/isClear', { state: { category: props.category, character: image, Level: Level, score: score[props.category] } })
-                                    : navigate('/setting', { state: { category: props.category, character: image, Level: Level } })
+          isClear[props.category] ? navigate('/isClear', { state: { category: props.category, character: image, Level: Level, score: score[props.category] } })
+            : navigate('/setting', { state: { category: props.category, character: image, Level: Level } })
         }}>
         {props.category}
-        {isClear[props.category] ? 
+        {isClear[props.category] === true ?
           <img src={LetterSrc} className='absolute -mt-12 ml-40
                                           xl:-mt-24 xl:ml-32
                                           w-[40px] h-[40px] 
@@ -145,47 +146,51 @@ function CategoryPage() {
       </button>
     )
   }
-  
+
   const [openTutorialModal, setOpenTutorialModal] = useState(false)
 
   useEffect(() => {
-  if(Level === 'Tutorial'){setOpenTutorialModal(true)}
+    if (Level === 'Tutorial') { setOpenTutorialModal(true) }
+    
+    setTimeout(function() {
+      document.getElementById('forRender').click()
+    }, 300);
   }, [])
 
   //튜토리얼일 때 설명 모달
   const TutorialModal = () => {
-    return(
+    return (
       <div className='justify-center flex'>
-      <div className='flex h-full w-full fixed items-center justify-center opacity-80 bg-orange-100 top-0 left-0'></div>
-      <motion.div className='flex border-2 top-40 fixed p-2 bg-white mx-auto w-9/12 lg:w-3/6 h-3/6 rounded-3xl text-center 
-       shadow-2xl items-center justify-center bg-[length:280px_200px] lg:bg-[length:1000px_180px] bg-no-repeat' style={{backgroundImage: `url(${popupBg})`}}
-        initial='hidden'
-        whileInView='visible'
-        viewport={{ once: true, amount: 0.5 }}
-        transition={{ duration: 0.5 }}
-        variants={{
-          hidden: {
-            opacity: 0, x: -50,
-          },
-          visible: {
-            opacity: 1, x: 0
-          }
-        }}
-      >
-        <div class='flex flex-col w-5/6 gap-3  mx-auto  h-5/6 my-auto justify-center items-center'>
-          <div className='relative'>
-            <div className='font-bold text-lg lg:text-xl mt-5'>안녕하세요, <label className='text-orange-400'>{user.displayName}</label>님!</div>
-            <div className='font-bold text-xs lg:text-lg'>DebateMate에 오신 것을 환영합니다 😺</div>
-            <div className='mt-7 mb-3 text-xs lg:text-base font-bold text-justify'>DebateMate는 AI 쿠룽이와 함께 토론을 진행하고 문해력을 기르는 게임입니다!
-            이번 토론게임은 튜토리얼로, 유치원생 쿠룽이와 토론해볼수 있습니다.
-            모든 난이도에는 5가지 토론 카테고리가 있습니다.
-            원하시는 카테고리를 골라 다양한 주제로 토론을 진행해보세요!</div>
-            <button className='p-1 bg-yellow-400 w-4/6 mt-5 rounded-xl font-bold text-md lg:text-xl hover:text-white hover:bg-yellow-500'
-              onClick={() => setOpenTutorialModal(false)}>카테고리 고르기</button>
+        <div className='flex h-full w-full fixed items-center justify-center opacity-80 bg-orange-100 top-0 left-0'></div>
+        <motion.div className='flex border-2 top-40 fixed p-2 bg-white mx-auto w-9/12 lg:w-3/6 h-3/6 rounded-3xl text-center 
+       shadow-2xl items-center justify-center bg-[length:280px_200px] lg:bg-[length:1000px_180px] bg-no-repeat' style={{ backgroundImage: `url(${popupBg})` }}
+          initial='hidden'
+          whileInView='visible'
+          viewport={{ once: true, amount: 0.5 }}
+          transition={{ duration: 0.5 }}
+          variants={{
+            hidden: {
+              opacity: 0, x: -50,
+            },
+            visible: {
+              opacity: 1, x: 0
+            }
+          }}
+        >
+          <div class='flex flex-col w-5/6 gap-3  mx-auto  h-5/6 my-auto justify-center items-center'>
+            <div className='relative'>
+              <div className='font-bold text-lg lg:text-xl mt-5'>안녕하세요, <label className='text-orange-400'>{user.displayName}</label>님!</div>
+              <div className='font-bold text-xs lg:text-lg'>DebateMate에 오신 것을 환영합니다 😺</div>
+              <div className='mt-7 mb-3 text-xs lg:text-base font-bold text-justify'>DebateMate는 AI 쿠룽이와 함께 토론을 진행하고 문해력을 기르는 게임입니다!
+                이번 토론게임은 튜토리얼로, 유치원생 쿠룽이와 토론해볼수 있습니다.
+                모든 난이도에는 5가지 토론 카테고리가 있습니다.
+                원하시는 카테고리를 골라 다양한 주제로 토론을 진행해보세요!</div>
+              <button className='p-1 bg-yellow-400 w-4/6 mt-5 rounded-xl font-bold text-md lg:text-xl hover:text-white hover:bg-yellow-500'
+                onClick={() => setOpenTutorialModal(false)}>카테고리 고르기</button>
+            </div>
           </div>
-        </div>
-      </motion.div>
-    </div>
+        </motion.div>
+      </div>
     )
   }
 
@@ -227,6 +232,7 @@ function CategoryPage() {
         </div>
       </div>
       {openTutorialModal && !isDone && <TutorialModal />}
+      <button id='forRender' onClick={()=>{setforRender(!forRender);}}></button>
     </div>
   )
 }

@@ -1,4 +1,5 @@
-import { Routes,Route,BrowserRouter } from 'react-router-dom';
+import { useEffect } from 'react';
+import { Routes, Route, BrowserRouter, useActionData } from 'react-router-dom';
 import Home from './pages/Home';
 import LoginPage from './pages/LoginPage';
 import { AuthContextProvider } from './context/AuthContext';
@@ -13,24 +14,34 @@ import IsClear from './pages/IsClear';
 
 
 function App() {
+
+  // const history = useActionData();
+
+  // useEffect(() => {
+  //   const unblock = history.block('Are you sure you want to leave this page?');
+  //   return () => {
+  //     unblock();
+  //   };
+  // }, [history]);
+
   return (
     <AuthContextProvider>
       <BrowserRouter>
-         <Routes>
-           <Route path='/' element={<LoginPage/>}/>
-           <Route path='/home' element={<Protected><Home/></Protected>}/>
-           <Route path='/grap' element={<Protected><GraphicPage/></Protected>}/>
-           <Route path='/rating' element={<Protected><RatingPage/></Protected>}/>
-           <Route path='/chat' element={<Protected><ChatPage/></Protected>}/>
-           <Route path='/congrat' element={<Protected><LevelDone/></Protected>}/>
-           <Route path='/category' element={<Protected><CategoryPage/></Protected>}/>
-           <Route path='/setting' element={<Protected><SettingDebatePage/></Protected>}/>
-          <Route path='/isclear' element={<Protected><IsClear/></Protected>}/>
-         </Routes>
+        <Routes>
+          <Route path='/' element={<LoginPage />} />
+          <Route path='/home' element={<Protected><Home /></Protected>} />
+          <Route path='/grap' element={<Protected><GraphicPage /></Protected>} />
+          <Route path='/rating' element={<Protected><RatingPage /></Protected>} />
+          <Route path='/chat' element={<Protected><ChatPage /></Protected>} />
+          <Route path='/congrat' element={<Protected><LevelDone /></Protected>} />
+          <Route path='/category' element={<Protected><CategoryPage /></Protected>} />
+          <Route path='/setting' element={<Protected><SettingDebatePage /></Protected>} />
+          <Route path='/isclear' element={<Protected><IsClear /></Protected>} />
+        </Routes>
       </BrowserRouter>
     </AuthContextProvider>
-      
-    
+
+
   );
 }
 

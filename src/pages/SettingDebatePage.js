@@ -21,6 +21,7 @@ function CategoryPage() {
   const Character = location.state.character
   const Level = location.state.Level
 
+
   //컴포넌트 : 확인 메세지
   const ConfirmMessage = () => {
     return (
@@ -31,7 +32,7 @@ function CategoryPage() {
         <div className='flex-row pt-8'>
           <button className='transition ease-in-out delay-150 hover:-translate-y-1 hover:scale-110 
                                w-[120px] h-[40px] border-2 border-inherit shadow-xl text-lg rounded-lg'
-            onClick={() => navigate('/category', { state: { src: Character, category:Category, Level:Level } })}>NO</button>
+            onClick={() => navigate('/category', { state: { src: Character, category: Category, Level:Level } })}>NO</button>
           <button className='transition ease-in-out delay-150 hover:-translate-y-1 hover:scale-110
                                w-[120px] h-[40px] ml-10 shadow-xl bg-[#F29104] text-lg text-white rounded-lg'
             onClick={() => setConfirm(true)}>YES</button>
@@ -64,7 +65,8 @@ function CategoryPage() {
 
     //함수 : 룰렛 돌리기
     const handleSpinClick = () => {
-      const newPrizeNumber = Math.floor(Math.random() * data.length);
+      const newPrizeNumber = 0;
+      console.log(newPrizeNumber)
       setPrizeNumber(newPrizeNumber);
       setMustSpin(true);
     };
@@ -80,9 +82,8 @@ function CategoryPage() {
 
       try {
         await TopicRef.get().then((doc) => {
-          const TopicName = doc.data()[Level][RandomTopicNum];
-          setTopic(TopicName)
-          console.log('토론주제 : ' + topic)
+          setTopic(doc.data()[Level][RandomTopicNum])
+          console.log('토론주제 : '+ topic)
         })
       } catch (error) {
         console.log(error)
@@ -124,6 +125,7 @@ function CategoryPage() {
                 "#F47C7C",
                 "#7286D3"
               ]}
+              spinDuration={[0.3]}
               onStopSpinning={() => {
                 setMustSpin(false);
                 setStop(true);
@@ -159,6 +161,7 @@ function CategoryPage() {
             <img className='w-9 h-8 hidden lg:block' src={Logo} />
             <div className='flex-1 text-lg md:text-xl text-white'>카테고리 : {Category}</div>
             <button className='border-orange-300 border-2 p-1 rounded-full hover:bg-orange-300 hover:text-white'
+              // onClick={()=>navigate('/home')}
               onClick={() => navigate('/home')}
             >
               <FaHome className='w-8 h-7' />
@@ -171,6 +174,7 @@ function CategoryPage() {
         <div className=' relative w-5/6 mx-auto justify-center items-center'>
           {confirm ? <Roulette /> : <ConfirmMessage />}
         </div>
+
       </div>
     </motion.div>
   )

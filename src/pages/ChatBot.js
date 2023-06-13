@@ -5,7 +5,7 @@ import {
   MainContainer, ChatContainer, MessageList,
   Message, MessageInput, TypingIndicator, Avatar
 } from '@chatscope/chat-ui-kit-react';
-import '@chatscope/chat-ui-kit-styles/dist/default/styles.css?ver=1.1.9';
+import '@chatscope/chat-ui-kit-styles/dist/default/styles.css?ver=2.5.3';
 //import { Prompt_Debate_Order, Prompt_Debate_Command } from '../components/Prompts';
 import Timer from '../components/Timer';
 import BuyTime from '../components/BuyTime';
@@ -80,6 +80,20 @@ function ChatBot(props) {
     8: `${USER_POSITION} 반론`,
     9: '평가',
   }
+
+  //새로고침 방지
+  useEffect(() => {
+    const handleBeforeUnload = (event) => {
+      event.preventDefault();
+      event.returnValue = '';
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, []);
 
   //토론 설정에 따른 프롬프트 받아오기
   useEffect(() => {
