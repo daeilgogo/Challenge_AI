@@ -9,6 +9,7 @@ import { motion } from 'framer-motion'
 import { firebase } from '../firebase'
 import Chart, { Title } from 'chart.js/auto';
 import { Button } from '@chatscope/chat-ui-kit-react'
+import HereIcon from '../assets/touch-screen.png'
 
 
 const options = [
@@ -200,12 +201,16 @@ function GraphicPage() {
       <button className={`w-[200px] h-[50px] xl:w-[180px] xl:h-[50px] lg:text-lg
                        transition ease-in-out delay-150 hover:-translate-y-1 hover:scale-110
                        border-2 border-inherit shadow-lg rounded-xl relative
-                     ${props.isClear[props.category] === true ? `bg-[#E5D1FA] border-4` : 'bg-white'}`}
+                     ${props.isClear[props.category] === true ? `bg-[#FFFBC1] border-4` : 'bg-white'}`}
 
         onClick={() => {
           BringGraph(selectedOption, props.category, props.isClear[props.category])
         }}>
         {props.category}
+        {props.isClear[props.category] && <img src={HereIcon} className='absolute -mt-12 ml-40
+                                          xl:-mt-14 xl:ml-36
+                                          w-[40px] h-[40px] 
+                                          lg:w-[50px] lg:h-[50px]'/>}
       </button>
     )
   }
