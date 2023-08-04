@@ -1,6 +1,6 @@
 # you can use this service at
-https://challenge-ai-game.vercel.app/home
 
+https://debate-mate.vercel.app/
 
 ![image](https://github.com/daeilgogo/Challenge_AI/assets/116702472/5b641a47-3069-4f3a-a4a2-daac6dcb96c7)
 
