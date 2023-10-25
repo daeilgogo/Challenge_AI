@@ -15,7 +15,7 @@ import WarningModal from '../components/WarningModal';
 import DebateOrderModal from '../components/DebateOrderModal'
 
 
-const API_KEY = process.env.REACT_APP_CHATGPT_API_KEY;
+const API_KEY = "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"
 const db = firebase.firestore()
 
 //*Variables*//
@@ -57,7 +57,7 @@ const StandardOfCoin = {
 
 
 function ChatBot(props) {
-
+  const [inputMessage, setInputMessage] = useState(''); //실시간 답변 받아오기
   const { user } = UserAuth();
 
   //토론 정보 프로퍼티로 받아오기
@@ -218,15 +218,23 @@ function ChatBot(props) {
 
     // ChatGPT API 요청 바디
     const apiRequestBody = {
-      "model": "gpt-3.5-turbo",
+      "model": "gpt-3.5-turbo-0613",
+      "stream" : true,
       "messages": [
         systemMessage,  // 시스템 메세지
         ...apiMessages  // 전체 채팅 메시지
-      ]
+      ],
     }
 
+    setMessages([...chatMessages, {
+      message: "",
+      sender: "Kurung"
+    }]);
 
-    await fetch("https://api.openai.com/v1/chat/completions",
+    let text = ''
+
+    try {
+      const response = await fetch("https://api.openai.com/v1/chat/completions",
       {
         method: "POST",
         headers: {
@@ -235,25 +243,47 @@ function ChatBot(props) {
 
         },
         body: JSON.stringify(apiRequestBody) // 요청 바디에 apiRequestBody를 JSON 형식으로 추가
-      }).then((data) => {
-        if(!data.ok){
-          throw Error(data.statusText);
-        }else{
-          return data.json(); // 응답 데이터를 JSON 형식으로 변환하여 반환
-        }
-      }).then((data) => {
-        console.log(data); // 응답 데이터를 콘솔에 출력
-        setMessages([...chatMessages, {
-          message: data.choices[0].message.content, // 응답 데이터에서 메시지 내용을 추출하여 chatMessages 배열에 추가
-          sender: "Kurung"
-        }]);
+      })
 
-        setisTyping(false); // 타이핑 중인 상태를 false로 변경
-        setMinutes(min[DebateOrderNum])
-        setSeconds(sdc[DebateOrderNum])
-      }).catch((error) => {
-        console.log(error); // 오류를 콘솔에 출력
-      });
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder('utf-8');
+
+      while (true) {
+        const chunk = await reader.read();
+        const { done, value } = chunk;
+        if(done) {
+          setisTyping(false); // 타이핑 중인 상태를 false로 변경
+          setMinutes(min[DebateOrderNum])
+          setSeconds(sdc[DebateOrderNum])
+          break;
+        }
+        const decodedChunk = decoder.decode(value);
+        const lines = decodedChunk.split('\n');
+        const parsedLines = lines.map(line => 
+          line.replace(/^data: /, "").trim())
+          .filter(line => line !== "" && line !== '[DONE]')
+          .map(line => JSON.parse(line));
+
+        for(const parsedLine of parsedLines) {
+          const { choices } = parsedLine;
+          const { delta } = choices[0];
+          const { content } = delta;
+          if(content) {
+            console.log(content);
+            text += content;
+            const newMessage = {
+              message: text,
+              sentTime: "just now",
+              sender: "Kurung"
+            }
+            const newMessages = [...chatMessages, newMessage];
+            setMessages(newMessages);
+          }
+        }
+      }
+    } catch (error) {
+      alert('error: ', error)
+    }
   }
 
 
