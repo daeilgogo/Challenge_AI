@@ -1,24 +1,23 @@
 import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { useNavigate } from 'react-router-dom'
 import { firebase } from '../firebase'
 import { UserAuth } from '../context/AuthContext'
 import Coins from '../assets/coins.png'
-import Time from '../assets/Time.jpg'
+
+const db = firebase.firestore();
 
 function BuyTime({ value, onChange, setBuyTime, HandleBuyTime, setOff }) {
 
   const { user } = UserAuth()
-  const navigate = useNavigate()
 
   //////Get score from firestore
-  const db = firebase.firestore();
   const [coins, setCoins] = useState('')
   const [canBuy, setCanBuy] = useState(false)
   
   useEffect(() => {
+    if (!user?.uid) return;
     const getinfo = db.collection("users").doc(user.uid)
-    getinfo.onSnapshot((doc) => {
+    const unsubscribe = getinfo.onSnapshot((doc) => {
       if (doc.exists) {
         const Coin = doc.data().Coins;
         setCoins(doc.data().Coins);
@@ -30,7 +29,8 @@ function BuyTime({ value, onChange, setBuyTime, HandleBuyTime, setOff }) {
         }
       }
     })
-  }, [])
+    return unsubscribe;
+  }, [user?.uid])
 
   return (
     <div className='justify-center flex' >
@@ -52,7 +52,7 @@ function BuyTime({ value, onChange, setBuyTime, HandleBuyTime, setOff }) {
       >
         <div className='flex flex-col w-5/6 gap-1  mx-auto  h-full  my-auto justify-center items-center'>
           <button className='ml-[80%]  font-bold text-2xl text-red-500' onClick={() => { setBuyTime(); setOff(false) }}>X</button>
-          <img src={Coins} className='w-[50px] h-[50px] -mt-[5%]' />
+          <img src={Coins} alt="coins" className='w-[50px] h-[50px] -mt-[5%]' />
           <label className='text-xl font-bold mt-3 flex'>내 코인 : <div className='ml-2 text-blue-500'> {coins} 개</div> </label>
           {canBuy ? <label className='font-bold'>코인으로 시간을 구매할 수 있습니다!</label>
                   : <label className='font-bold text-red-500'>코인이 부족합니다!</label>}

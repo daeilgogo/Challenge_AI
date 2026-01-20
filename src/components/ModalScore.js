@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react'
-import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
 import Letter_A from '../assets/score/letter-a.png'
@@ -20,17 +19,16 @@ function ModalScore(props) {
   const isClear = props.isClear
   const Level = props.Level
 
-  const Winner = new Audio(Success)
-  const Loser= new Audio(Lose)
-
   ///////////Sound Effect
   useEffect(() => {
-    if(isClear === false ){
-      Loser.play();
-    }else{
-      Winner.play()
+    const winner = new Audio(Success)
+    const loser = new Audio(Lose)
+    if (isClear === false) {
+      loser.play();
+    } else {
+      winner.play()
     }
-  },[])
+  }, [isClear])
   
   let LetterSrc;
 
@@ -60,9 +58,9 @@ function ModalScore(props) {
       >
         {Level === 'Tutorial' ?
         <div className='flex flex-col w-5/6 gap-3  mx-auto  h-5/6 my-auto justify-center items-center'>
-        <img src={Celebrate} className='absolute w-full h-full' />
+        <img src={Celebrate} alt="celebrate" className='absolute w-full h-full' />
         <div className='relative justify-center items-center'>
-          <img src={Clear} className='ml-16 mb-5 w-[150px] h-[40px]' />
+          <img src={Clear} alt="clear" className='ml-16 mb-5 w-[150px] h-[40px]' />
           <div className='text-xl font-bold mt-5'>잘하셨어요! 튜토리얼을 마쳤습니다.</div>
           <div className='text-xl font-bold'>이제 초등학생 난이도가 열렸습니다!</div>
           <button className='p-1 bg-orange-200 w-4/6 mt-5 rounded-xl font-bold text-xl hover:text-white hover:bg-orange-300'
@@ -71,10 +69,10 @@ function ModalScore(props) {
       </div>
         : isClear === true ?
         <div className='flex flex-col w-5/6 gap-3  mx-auto  h-5/6 my-auto justify-center items-center'>
-          <img src={Celebrate} className='absolute w-full h-full' />
+          <img src={Celebrate} alt="celebrate" className='absolute w-full h-full' />
           <div className='relative justify-center items-center'>
-            <img src={Clear} className='ml-16 mb-5 w-[150px] h-[40px]' />
-            <img src={LetterSrc} className='ml-20 w-[100px] h-[90px]' />
+            <img src={Clear} alt="clear" className='ml-16 mb-5 w-[150px] h-[40px]' />
+            <img src={LetterSrc} alt="grade" className='ml-20 w-[100px] h-[90px]' />
             <div className='text-xl font-bold mt-5'>총점📝 : {props.points}점</div>
             <div className='text-xl font-bold'>코인🪙 : + {CoinNum}개</div>
             {props.count === 0 ? console.log("시간초과없음")
@@ -85,8 +83,8 @@ function ModalScore(props) {
         </div>
         : <div className='flex flex-col w-5/6 gap-3  mx-auto  h-5/6 my-auto justify-center items-center'>
         <div className='relative justify-center items-center'>
-          <img src={Fail} className=' ml-5 mb-5 w-[150px] h-[40px]' />
-          <img src={LetterSrc} className='ml-12 w-[100px] h-[90px]' />
+          <img src={Fail} alt="fail" className=' ml-5 mb-5 w-[150px] h-[40px]' />
+          <img src={LetterSrc} alt="grade" className='ml-12 w-[100px] h-[90px]' />
           <div className='text-xl font-bold mt-5'>총점📝 : {props.points}점</div>
           <div className='text-xl font-bold'>코인🪙 : + 0개</div>
           <button className='p-1 bg-orange-200 w-4/6 mt-5 rounded-xl font-bold text-xl hover:text-white hover:bg-orange-300'

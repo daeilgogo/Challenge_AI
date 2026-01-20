@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { FaHome } from 'react-icons/fa'
 import { UserAuth } from '../context/AuthContext'
 import Logo from '../assets/logo.png'
@@ -13,7 +13,7 @@ function MenuBar({setModal}) {
     const navigate= useNavigate()
     //initialize UserAuth
 
-    const {logOut, user}=UserAuth()
+    const { logOut } = UserAuth()
   // Define a function to Handle the Logout Button
   
   const handleLogout= async()=>{
@@ -32,7 +32,7 @@ function MenuBar({setModal}) {
              <button className='hover:bg-orange-300 hover:text-white w-5/6 text-left rounded-sm p-1 bg-white mx-auto flex items-center gap-3  fond-bold' onClick={()=>{navigate('/grap');setModal(false)}}><BsGraphUpArrow/>그래프</button>
              <button className='hover:bg-orange-300 hover:text-white w-5/6 text-left rounded-sm p-1 bg-white mx-auto flex items-center gap-3  fond-bold' onClick={()=>{navigate('/rating');setModal(false)}}><MdHotelClass/>랭킹</button>
              <MyComponent/>
-             <button className='hover:bg-orange-300 hover:text-white w-5/6  rounded-sm p-1 bg-red-300 mx-auto mt-10  items-center justify-center flex gap-2' onClick={handleLogout}> <img className='w-5 h-5' src={Logo}/>로그아웃</button>
+             <button className='hover:bg-orange-300 hover:text-white w-5/6  rounded-sm p-1 bg-red-300 mx-auto mt-10  items-center justify-center flex gap-2' onClick={handleLogout}> <img className='w-5 h-5' src={Logo} alt="logo"/>로그아웃</button>
           </div>
      </div>
   )
