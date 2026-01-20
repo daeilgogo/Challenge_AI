@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { firebase } from '../firebase'
 import { UserAuth } from '../context/AuthContext'
+import OpenAI from "openai";
 import {
   MainContainer, ChatContainer, MessageList,
   Message, MessageInput, TypingIndicator, Avatar
@@ -15,7 +16,17 @@ import WarningModal from '../components/WarningModal';
 import DebateOrderModal from '../components/DebateOrderModal'
 
 
-const API_KEY = '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'
+// NOTE: Never hard-code secret keys in the client bundle.
+// Create React App env var: set `REACT_APP_OPENAI_API_KEY` in a local `.env` file.
+const LLM_PROVIDER = process.env.REACT_APP_LLM_PROVIDER || 'deepseek';
+
+const OPENAI_API_KEY = process.env.REACT_APP_OPENAI_API_KEY;
+const OPENAI_MODEL = process.env.REACT_APP_OPENAI_MODEL || 'gpt-4o-mini';
+
+// DeepSeek is OpenAI-compatible (chat/completions). Use its API key + base URL.
+const DEEPSEEK_API_KEY = process.env.REACT_APP_DEEPSEEK_API_KEY;
+const DEEPSEEK_MODEL = process.env.REACT_APP_DEEPSEEK_MODEL || 'deepseek-chat';
+const DEEPSEEK_BASE_URL = process.env.REACT_APP_DEEPSEEK_BASE_URL || 'https://api.deepseek.com';
 const db = firebase.firestore()
 
 //*Variables*//
@@ -156,6 +167,8 @@ function ChatBot(props) {
 
   //[STATE] check the GPT is typing
   const [isTyping, setisTyping] = useState(false);
+  // Prevent duplicate concurrent calls (double-clicks / repeated sends)
+  const requestInFlightRef = useRef(false);
 
   //[FUNCTION]: send message to ChatGPT, and add prompt
   const handleSend = async (message) => {
@@ -188,6 +201,26 @@ function ChatBot(props) {
 
   async function processMessageToChatGPT(chatMessages) {
 
+    const provider = (LLM_PROVIDER || '').toLowerCase();
+    const apiKey = provider === 'openai' ? OPENAI_API_KEY : DEEPSEEK_API_KEY;
+    const baseURL = provider === 'openai' ? undefined : DEEPSEEK_BASE_URL;
+    const model = provider === 'openai' ? OPENAI_MODEL : DEEPSEEK_MODEL;
+
+    if (!apiKey) {
+      console.error(
+        provider === 'openai'
+          ? 'Missing OpenAI API key. Set REACT_APP_OPENAI_API_KEY in your .env file.'
+          : 'Missing DeepSeek API key. Set REACT_APP_DEEPSEEK_API_KEY in your .env file.'
+      );
+      setisTyping(false);
+      return;
+    }
+
+    if (requestInFlightRef.current) {
+      return;
+    }
+    requestInFlightRef.current = true;
+
     // chatGPT API용 메시지 형식 지정
     // chatMessages 배열의 모든 요소에 대해 반복문 실행
     let apiMessages = chatMessages.map((messageObject) => {
@@ -202,44 +235,64 @@ function ChatBot(props) {
     });
 
 
-    // ChatGPT API 요청 바디
-    const apiRequestBody = {
-      "model": "gpt-3.5-turbo",
-      "messages": [
-        systemMessage,  // 시스템 메세지
-        ...apiMessages  // 전체 채팅 메시지
-      ]
-    }
-
-
-    await fetch("https://api.openai.com/v1/chat/completions",
-      {
-        method: "POST",
-        headers: {
-          "Authorization": "Bearer " + API_KEY, // API_KEY를 Authorization 헤더에 추가
-          "Content-Type": "application/json", // JSON 형식으로 요청을 보냄
-
-        },
-        body: JSON.stringify(apiRequestBody) // 요청 바디에 apiRequestBody를 JSON 형식으로 추가
-      }).then((data) => {
-        if(!data.ok){
-          throw Error(data.statusText);
-        }else{
-          return data.json(); // 응답 데이터를 JSON 형식으로 변환하여 반환
-        }
-      }).then((data) => {
-        console.log(data); // 응답 데이터를 콘솔에 출력
-        setMessages([...chatMessages, {
-          message: data.choices[0].message.content, // 응답 데이터에서 메시지 내용을 추출하여 chatMessages 배열에 추가
-          sender: "Kurung"
-        }]);
-
-        setisTyping(false); // 타이핑 중인 상태를 false로 변경
-        setMinutes(min[DebateOrderNum])
-        setSeconds(sdc[DebateOrderNum])
-      }).catch((error) => {
-        console.log(error); // 오류를 콘솔에 출력
+    try {
+      const openai = new OpenAI({
+        apiKey,
+        baseURL,
+        // Using the OpenAI SDK directly in the browser exposes your key.
+        // Prefer a backend proxy for production.
+        dangerouslyAllowBrowser: true,
       });
+
+      // Use Chat Completions API for maximum compatibility (DeepSeek uses OpenAI-compatible chat/completions).
+      const response = await openai.chat.completions.create({
+        model,
+        messages: [
+          { role: 'system', content: systemMessage.content },
+          ...apiMessages,
+        ],
+      });
+
+      const content = response?.choices?.[0]?.message?.content;
+      if (!content) {
+        throw Error('LLM response missing assistant content');
+      }
+
+      setMessages([
+        ...chatMessages,
+        {
+          message: content,
+          sender: "Kurung",
+        },
+      ]);
+    } catch (error) {
+      console.log(error);
+
+      const status = error?.status || error?.response?.status;
+      let errorMessage = '요청 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.';
+
+      // 429 is used for both rate limits and “insufficient quota” in practice.
+      if (status === 429) {
+        errorMessage = '요청 한도(429)에 걸렸어요. 크레딧/결제 상태를 확인하거나 잠시 후 다시 시도해주세요.';
+      } else if (status === 401) {
+        errorMessage = 'API 키가 올바르지 않아요(401). 키/환경변수를 확인해주세요.';
+      } else if (status === 403) {
+        errorMessage = '이 모델/요청에 대한 권한이 없어요(403). 플랜/모델 권한을 확인해주세요.';
+      }
+
+      setMessages([
+        ...chatMessages,
+        {
+          message: errorMessage,
+          sender: "Kurung",
+        },
+      ]);
+    } finally {
+      requestInFlightRef.current = false;
+      setisTyping(false);
+      setMinutes(min[DebateOrderNum]);
+      setSeconds(sdc[DebateOrderNum]);
+    }
   }
 
 

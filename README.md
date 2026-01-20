@@ -4,6 +4,18 @@ https://debate-mate.vercel.app/
 
 ![image](https://github.com/daeilgogo/Challenge_AI/assets/116702472/5b641a47-3069-4f3a-a4a2-daac6dcb96c7)
 
+## OpenAI API key (local dev)
+
+This app calls the OpenAI API from the browser.
+
+1. Copy `.env.example` to `.env`
+2. Choose a provider:
+	- DeepSeek (default): set `REACT_APP_DEEPSEEK_API_KEY=...`
+	- OpenAI: set `REACT_APP_LLM_PROVIDER=openai` and `REACT_APP_OPENAI_API_KEY=...`
+3. Restart `npm start`
+
+Note: there is no truly “free” OpenAI API model. If you need a free experience, that typically means using the ChatGPT website/app (not the API).
+
 
 
 
